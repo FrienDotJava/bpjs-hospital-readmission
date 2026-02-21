@@ -7,7 +7,11 @@ import yaml
 load_dotenv()
 
 def load_dataset_from_gcs(source: str) -> pd.DataFrame:
-    return pd.read_csv(source, index_col=0)
+    return pd.read_csv(source, index_col=0, low_memory=False)
+
+
+def load_dataset_from_csv(source: Path) -> pd.DataFrame:
+    return pd.read_csv(source)
 
 
 def save_dataframe_to_csv(df: pd.DataFrame, path: Path):
@@ -16,7 +20,7 @@ def save_dataframe_to_csv(df: pd.DataFrame, path: Path):
     df.to_csv(path)
 
 
-def load_params(param_path: str) -> dict:
+def load_params(param_path: str = "params.yaml") -> dict:
     try:
         with open(param_path, 'r') as file:
             params = yaml.safe_load(file)

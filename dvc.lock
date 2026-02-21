@@ -5,12 +5,8 @@ stages:
     deps:
     - path: src/data_loading.py
       hash: md5
-      md5: e41a44d1da8099512b8d5faa4a86f0ba
-      size: 864
-    - path: src/utils.py
-      hash: md5
-      md5: 136d5b7a4446f7df54515901462cf88b
-      size: 636
+      md5: dd4fbe4c1924c8cef862933ae76e976d
+      size: 1127
     params:
       params.yaml:
         fkrtl_gcs_path: gs://data-sample-bpjs/raw/dm_fkrtl.csv
@@ -29,3 +25,18 @@ stages:
       hash: md5
       md5: 612e91cc605a62f11d20a5d8a9eee035
       size: 25694115
+  data_validation:
+    cmd: python src/data_validation.py
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: 4f3e10e5c2661b6c86ed7529ba1aa080.dir
+      size: 776538456
+      nfiles: 3
+    - path: src/data_validation.py
+      hash: md5
+      md5: b430bf732d00ac8853a47a366d752708
+      size: 1904
+    params:
+      params.yaml:
+        data.raw_data_folder: ./data/raw

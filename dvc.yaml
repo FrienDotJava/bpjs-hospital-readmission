@@ -7,8 +7,14 @@ stages:
     - peserta_gcs_path
     deps:
     - src/data_loading.py
-    - src/utils.py
     outs:
     - data/raw/fkrtl.csv
     - data/raw/fktp.csv
     - data/raw/peserta.csv
+  data_validation:
+    cmd: python src/data_validation.py
+    deps:
+    - data/raw
+    - src/data_validation.py
+    params:
+    - data.raw_data_folder

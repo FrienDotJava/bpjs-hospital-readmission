@@ -1,11 +1,11 @@
 {
   "data": {
     "asset": {
-      "id": "7780dacf-2411-4374-bfbb-fe0f790d0165",
+      "id": "962d6189-cfcd-4ef3-9dee-fafaa08f83b6",
       "name": "fktp_asset"
     },
     "batch_definition": {
-      "id": "26687ab1-92ff-43dd-b742-b8b9f8086a48",
+      "id": "d461e7fc-6822-4cc0-b5bc-6ec59014bed0",
       "name": "fktp_batch_definition"
     },
     "datasource": {
