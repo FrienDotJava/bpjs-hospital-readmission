@@ -15,7 +15,7 @@ def main():
 
     raw_peserta_path = Path(params['data']['raw_data_folder']) / "peserta.csv"
     raw_fktp_path = Path(params['data']['raw_data_folder']) / "fktp.csv"
-    raw_fkrtl_path = Path(params['data']['raw_data_folder']) / "fktl.csv"
+    raw_fkrtl_path = Path(params['data']['raw_data_folder']) / "fkrtl.csv"
 
     save_dataframe_to_csv(df_peserta, raw_peserta_path)
     save_dataframe_to_csv(df_fktp, raw_fktp_path)

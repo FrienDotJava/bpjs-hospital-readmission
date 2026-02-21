@@ -1,0 +1,31 @@
+schema: '2.0'
+stages:
+  data_loading:
+    cmd: python src/data_loading.py
+    deps:
+    - path: src/data_loading.py
+      hash: md5
+      md5: e41a44d1da8099512b8d5faa4a86f0ba
+      size: 864
+    - path: src/utils.py
+      hash: md5
+      md5: 136d5b7a4446f7df54515901462cf88b
+      size: 636
+    params:
+      params.yaml:
+        fkrtl_gcs_path: gs://data-sample-bpjs/raw/dm_fkrtl.csv
+        fktp_gcs_path: gs://data-sample-bpjs/raw/dm_fktp_kapitasi.csv
+        peserta_gcs_path: gs://data-sample-bpjs/raw/dm_2021_kepesertaan.csv
+    outs:
+    - path: data/raw/fkrtl.csv
+      hash: md5
+      md5: fb2a5fa33753f29775936d3e9ce0feac
+      size: 552060992
+    - path: data/raw/fktp.csv
+      hash: md5
+      md5: 5851711389424190c7549f375f8d7723
+      size: 198783349
+    - path: data/raw/peserta.csv
+      hash: md5
+      md5: 612e91cc605a62f11d20a5d8a9eee035
+      size: 25694115

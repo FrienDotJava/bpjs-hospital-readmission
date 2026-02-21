@@ -4,3 +4,4 @@ service-key.json
 data/
 artifacts/
 misc/
+__pycache__/

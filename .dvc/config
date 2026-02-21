@@ -1,0 +1,6 @@
+[core]
+    remote = origin
+['remote "origin"']
+    url = s3://bpjs-hospital-readmission
+    endpointurl = https://dagshub.com/api/v1/repo-buckets/s3/FrienDotJava
+    region = us-east-1

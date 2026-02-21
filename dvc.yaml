@@ -1,0 +1,14 @@
+stages:
+  data_loading:
+    cmd: python src/data_loading.py
+    params:
+    - fkrtl_gcs_path
+    - fktp_gcs_path
+    - peserta_gcs_path
+    deps:
+    - src/data_loading.py
+    - src/utils.py
+    outs:
+    - data/raw/fkrtl.csv
+    - data/raw/fktp.csv
+    - data/raw/peserta.csv
