@@ -1,0 +1,22 @@
+{
+  "data": {
+    "asset": {
+      "id": "4efe2c21-ac5a-4ed9-a62b-9d94ea9dccae",
+      "name": "peserta_asset"
+    },
+    "batch_definition": {
+      "id": "2ed32cf6-1d79-4839-9be4-c8bdc9e4a1b3",
+      "name": "peserta_batch_definition"
+    },
+    "datasource": {
+      "id": "3900886a-31a4-4690-ad7b-8190aa72d7f2",
+      "name": "bpjs_datasource"
+    }
+  },
+  "id": "30e6e531-cc28-4ac3-b46d-c1ef96de6003",
+  "name": "peserta_audit",
+  "suite": {
+    "id": "5053f7eb-a988-4e8e-a75d-e0a6f77fc1f5",
+    "name": "peserta_validation"
+  }
+}

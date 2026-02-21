@@ -1,0 +1,51 @@
+{
+  "expectations": [
+    {
+      "id": "e48218f3-01b7-4ffb-a882-70bf7cad6f77",
+      "kwargs": {
+        "column": "PSTV01"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "732d557a-574e-4844-95ae-b73438e85ebf",
+      "kwargs": {
+        "column": "PSTV02"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "179a491d-6f5f-40b0-947f-4ddb78cdf367",
+      "kwargs": {
+        "column": "PSTV05",
+        "value_set": [
+          "LAKI-LAKI",
+          "PEREMPUAN"
+        ]
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_in_set"
+    },
+    {
+      "id": "c9b29846-7bf7-4d4d-a7fd-b777724ca9fc",
+      "kwargs": {
+        "column": "PSTV15",
+        "type_": "float"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_of_type"
+    }
+  ],
+  "id": "5053f7eb-a988-4e8e-a75d-e0a6f77fc1f5",
+  "meta": {
+    "great_expectations_version": "1.11.3"
+  },
+  "name": "peserta_validation",
+  "notes": null
+}

@@ -1,0 +1,47 @@
+{
+  "expectations": [
+    {
+      "id": "efb57ba8-c38e-41e6-b1c5-fbb7124869eb",
+      "kwargs": {
+        "column": "PSTV01"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "de367c54-84f7-41fa-a32b-832ec52d3b3f",
+      "kwargs": {
+        "column": "PSTV02"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "2d0fbd75-7072-4544-8e14-15f9805865b5",
+      "kwargs": {
+        "column": "FKP02"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "304519c9-de77-4407-aba9-f79f2e8209a0",
+      "kwargs": {
+        "column": "PSTV15",
+        "type_": "float"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_of_type"
+    }
+  ],
+  "id": "2f3ad9b7-0b64-498f-b544-a652f0166ffb",
+  "meta": {
+    "great_expectations_version": "1.11.3"
+  },
+  "name": "fktp_validation",
+  "notes": null
+}

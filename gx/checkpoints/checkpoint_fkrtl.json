@@ -1,0 +1,12 @@
+{
+  "actions": [],
+  "id": "ff798147-f5b9-4f15-bf7b-c6e519cbb9f2",
+  "name": "checkpoint_fkrtl",
+  "result_format": "SUMMARY",
+  "validation_definitions": [
+    {
+      "id": "1cd80e65-69f7-47cf-84c6-f368c8c9d8d8",
+      "name": "fkrtl_audit"
+    }
+  ]
+}

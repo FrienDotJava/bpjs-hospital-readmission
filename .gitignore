@@ -1,0 +1,6 @@
+venv
+.env
+service-key.json
+data/
+artifacts/
+misc/

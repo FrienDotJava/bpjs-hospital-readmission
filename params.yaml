@@ -1,0 +1,8 @@
+
+peserta_gcs_path: "gs://data-sample-bpjs/raw/dm_2021_kepesertaan.csv"
+fktp_gcs_path: "gs://data-sample-bpjs/raw/dm_fktp_kapitasi.csv"
+fkrtl_gcs_path: "gs://data-sample-bpjs/raw/dm_fkrtl.csv"
+
+data:
+    label_column: 'readmitted_30d'
+    raw_data_folder: "./data/raw"

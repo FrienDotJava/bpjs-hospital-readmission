@@ -1,0 +1,85 @@
+{
+  "expectations": [
+    {
+      "id": "717e4433-57c2-43ac-b5ab-23e65dd6298c",
+      "kwargs": {
+        "column": "PSTV01"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "c3a2fbc1-f3ec-4247-a2e3-beab3af715ba",
+      "kwargs": {
+        "column": "PSTV02"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "77e2c842-cbf6-47b4-b0c4-b545c54eb8b1",
+      "kwargs": {
+        "column": "FKL02"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "47a7adb3-4915-4b5f-b9a2-76cbdec5972a",
+      "kwargs": {
+        "column": "PSTV15",
+        "type_": "float"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_of_type"
+    },
+    {
+      "id": "743bc6e2-e27d-4eff-8713-c9151ed44d1a",
+      "kwargs": {
+        "column": "FKL17A"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "0ec6a9d8-0635-4c10-a6db-6d2f786c4125",
+      "kwargs": {
+        "column": "FKL30"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "3b70be4f-82d1-47c1-83e8-d54900b56f33",
+      "kwargs": {
+        "column": "FKL47",
+        "type_": "int"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_of_type"
+    },
+    {
+      "id": "0d15fbd8-b58b-451f-883a-7cfa1a2eb83e",
+      "kwargs": {
+        "column": "FKL48",
+        "type_": "int"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_of_type"
+    }
+  ],
+  "id": "ed756f36-9992-4190-bce1-6f5a3cb29b6e",
+  "meta": {
+    "great_expectations_version": "1.11.3"
+  },
+  "name": "fkrtl_validation",
+  "notes": null
+}

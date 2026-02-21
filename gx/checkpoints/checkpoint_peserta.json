@@ -1,0 +1,12 @@
+{
+  "actions": [],
+  "id": "b4426870-e966-4438-86d4-0ef4ad5a955c",
+  "name": "checkpoint_peserta",
+  "result_format": "SUMMARY",
+  "validation_definitions": [
+    {
+      "id": "30e6e531-cc28-4ac3-b46d-c1ef96de6003",
+      "name": "peserta_audit"
+    }
+  ]
+}
