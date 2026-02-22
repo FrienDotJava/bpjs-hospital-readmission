@@ -178,3 +178,107 @@ stages:
       hash: md5
       md5: cc333c14b3e2fc7ef1fca6492e8417c2
       size: 24891354
+  feature_engineering:
+    cmd: python src/feature_engineering.py
+    deps:
+    - path: data/cleaned
+      hash: md5
+      md5: ab6c88d6208b0aa6311570bc27365fe6.dir
+      size: 1238308258
+      nfiles: 4
+    - path: src/feature_engineering.py
+      hash: md5
+      md5: 07ccd28b6eeef6646eeec92e8f9630be
+      size: 9934
+    params:
+      params.yaml:
+        feature_engineering.feature_store_cols:
+        - peserta.STD(fkrtl.lama_hari_kunjungan)
+        - peserta.SUM(fkrtl.jml_kunjungan_fkrtl)
+        - peserta.SUM(fkrtl.lama_hari_kunjungan)
+        - peserta.status_peserta
+        - peserta.SUM(fktp.jarak_hari_antar_kunjungan)
+        - peserta.provinsi_faskes
+        - peserta.MEAN(fktp.jarak_hari_antar_kunjungan)
+        - peserta.segmen_peserta
+        - peserta.STD(fkrtl.spesifikasi_kelompok_kasus)
+        - peserta.MAX(fkrtl.tarif_drugs)
+        - peserta.kab_kota_tempat_tinggal
+        - peserta.provinsi_tempat_tinggal
+        - peserta.SUM(fktp.no_keluarga)
+        - peserta.MEAN(fkrtl.spesifikasi_kelompok_kasus)
+        - peserta.SUM(fkrtl.biaya_tagih)
+        - peserta.MAX(fktp.jarak_hari_antar_kunjungan)
+        - peserta.SUM(fkrtl.no_keluarga)
+        - peserta.MIN(fkrtl.spesifikasi_kelompok_kasus)
+        - peserta.SUM(fkrtl.bobot)
+        - peserta.STD(fkrtl.biaya_tagih)
+        - peserta.SUM(fktp.bobot)
+        - peserta.MIN(fkrtl.biaya_tagih)
+        - peserta.gender
+        - peserta.COUNT(fktp)
+        feature_engineering.selected_cols:
+        - peserta.STD(fkrtl.lama_hari_kunjungan)
+        - peserta.SUM(fkrtl.jml_kunjungan_fkrtl)
+        - jml_kunjungan_fkrtl
+        - status_pulang_peserta
+        - MONTH(tanggal_pulang)
+        - YEAR(tanggal_pulang)
+        - peserta.SUM(fkrtl.lama_hari_kunjungan)
+        - peserta.status_peserta
+        - peserta.SUM(fktp.jarak_hari_antar_kunjungan)
+        - MONTH(tanggal_datang)
+        - kode_nama_diagnosis_primer_ICD10
+        - kepemilikan_perujuk
+        - peserta.provinsi_faskes
+        - kode_casemix
+        - jenis_perujuk
+        - tipe_perujuk
+        - peserta.MEAN(fktp.jarak_hari_antar_kunjungan)
+        - peserta.segmen_peserta
+        - kepemilikan_fkrtl
+        - peserta.STD(fkrtl.spesifikasi_kelompok_kasus)
+        - kode_nama_diagnosis_ICD10
+        - peserta.MAX(fkrtl.tarif_drugs)
+        - peserta.kab_kota_tempat_tinggal
+        - kode_INACBGs
+        - tipe_fkrtl
+        - peserta.provinsi_tempat_tinggal
+        - peserta.SUM(fktp.no_keluarga)
+        - peserta.MEAN(fkrtl.spesifikasi_kelompok_kasus)
+        - peserta.SUM(fkrtl.biaya_tagih)
+        - kab_kota_fkrtl
+        - peserta.MAX(fktp.jarak_hari_antar_kunjungan)
+        - peserta.SUM(fkrtl.no_keluarga)
+        - peserta.MIN(fkrtl.spesifikasi_kelompok_kasus)
+        - peserta.SUM(fkrtl.bobot)
+        - peserta.STD(fkrtl.biaya_tagih)
+        - peserta.SUM(fktp.bobot)
+        - peserta.MIN(fkrtl.biaya_tagih)
+        - peserta.gender
+        - peserta.COUNT(fktp)
+    outs:
+    - path: artifacts/scaler.pkl
+      hash: md5
+      md5: 98bd04a2582af9c693cb1ea38fb4e409
+      size: 1815
+    - path: data/feature_store/feature_store_peserta.csv
+      hash: md5
+      md5: d3ef9bf50737c8afad1ee9536b6bf984
+      size: 3092760
+    - path: data/interim/feature_matrix.csv
+      hash: md5
+      md5: f66296095d00a88cf1194e62dfb41d79
+      size: 41016370
+    - path: data/processed/final_data.parquet
+      hash: md5
+      md5: 7873001a33551ecdd337c6ee3490addb
+      size: 2458355
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 67683fb49696d2042430783003063d7c
+      size: 2294407
+    - path: data/processed/train.csv
+      hash: md5
+      md5: b039679936948663fec26794f83f068f
+      size: 9185741

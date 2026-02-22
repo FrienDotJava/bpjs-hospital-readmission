@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 import os
 import yaml
+import pickle
 
 load_dotenv()
 
@@ -44,10 +45,20 @@ def load_dataset_from_csv(source: Path) -> pd.DataFrame:
     return pd.read_csv(source)
 
 
+def load_csv_parse_date(source: Path, columns: list) -> pd.DataFrame:
+    return pd.read_csv(source, parse_dates=columns)
+
+
 def save_dataframe_to_csv(df: pd.DataFrame, path: Path):
     folder_path = path.parent
     os.makedirs(folder_path, exist_ok=True)
     df.to_csv(path, index=False)
+
+
+def save_dataframe_to_parquet(df: pd.DataFrame, path: Path):
+    folder_path = path.parent
+    os.makedirs(folder_path, exist_ok=True)
+    df.to_parquet(path, engine='fastparquet')
 
 
 def load_params(param_path: str = "params.yaml") -> dict:
@@ -57,3 +68,10 @@ def load_params(param_path: str = "params.yaml") -> dict:
         return params
     except Exception as e:
         raise Exception(f"Error loading parameters: {e}")
+    
+
+def save_artifact(artifact, path: Path):
+    folder_path = path.parent
+    os.makedirs(folder_path, exist_ok=True)
+    with open(path, 'wb') as f:
+        pickle.dump(artifact, f)

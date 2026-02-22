@@ -11,11 +11,21 @@ data:
     raw_fktp_path: "./data/raw/fktp.csv"
     raw_fktp_decoded_path: "./data/raw/fktp_decoded.csv"
     raw_fkrtl_path: "./data/raw/fkrtl.csv"
+
     cleaned_data_folder: "./data/cleaned"
     cleaned_peserta_path: "./data/cleaned/peserta.csv"
     cleaned_fktp_encoded_path: "./data/cleaned/fktp_encoded.csv"
     cleaned_fktp_decoded_path: "./data/cleaned/fktp_decoded.csv"
     cleaned_fkrtl_path: "./data/cleaned/fkrtl.csv"
+    
+    feature_store_path: "./data/feature_store/feature_store_peserta.csv"
+    feature_matrix_path: "./data/interim/feature_matrix.csv"
+    final_data_path: "./data/processed/final_data.parquet"
+    train_data_path: "./data/processed/train.csv"
+    test_data_path: "./data/processed/test.csv"
+
+scaler:
+    scaler_path: "./artifacts/scaler.pkl"
 
 data_cleaning:
     new_column_names_peserta:
@@ -120,3 +130,81 @@ data_cleaning:
         - tarif_drugs
         - biaya_tagih
         - biaya_verifikasi
+
+feature_engineering:
+    feature_store_cols:
+        - peserta.STD(fkrtl.lama_hari_kunjungan)
+        - peserta.SUM(fkrtl.jml_kunjungan_fkrtl)
+        - peserta.SUM(fkrtl.lama_hari_kunjungan)
+        - peserta.status_peserta
+        - peserta.SUM(fktp.jarak_hari_antar_kunjungan)
+        - peserta.provinsi_faskes
+        - peserta.MEAN(fktp.jarak_hari_antar_kunjungan)
+        - peserta.segmen_peserta
+        - peserta.STD(fkrtl.spesifikasi_kelompok_kasus)
+        - peserta.MAX(fkrtl.tarif_drugs)
+        - peserta.kab_kota_tempat_tinggal
+        - peserta.provinsi_tempat_tinggal
+        - peserta.SUM(fktp.no_keluarga)
+        - peserta.MEAN(fkrtl.spesifikasi_kelompok_kasus)
+        - peserta.SUM(fkrtl.biaya_tagih)
+        - peserta.MAX(fktp.jarak_hari_antar_kunjungan)
+        - peserta.SUM(fkrtl.no_keluarga)
+        - peserta.MIN(fkrtl.spesifikasi_kelompok_kasus)
+        - peserta.SUM(fkrtl.bobot)
+        - peserta.STD(fkrtl.biaya_tagih)
+        - peserta.SUM(fktp.bobot)
+        - peserta.MIN(fkrtl.biaya_tagih)
+        - peserta.gender
+        - peserta.COUNT(fktp)
+    selected_cols:
+        - peserta.STD(fkrtl.lama_hari_kunjungan)
+        - peserta.SUM(fkrtl.jml_kunjungan_fkrtl)
+        - jml_kunjungan_fkrtl
+        - status_pulang_peserta
+        - MONTH(tanggal_pulang)
+        - YEAR(tanggal_pulang)
+        - peserta.SUM(fkrtl.lama_hari_kunjungan)
+        - peserta.status_peserta
+        - peserta.SUM(fktp.jarak_hari_antar_kunjungan)
+        - MONTH(tanggal_datang)
+        - kode_nama_diagnosis_primer_ICD10
+        - kepemilikan_perujuk
+        - peserta.provinsi_faskes
+        - kode_casemix
+        - jenis_perujuk
+        - tipe_perujuk
+        - peserta.MEAN(fktp.jarak_hari_antar_kunjungan)
+        - peserta.segmen_peserta
+        - kepemilikan_fkrtl
+        - peserta.STD(fkrtl.spesifikasi_kelompok_kasus)
+        - kode_nama_diagnosis_ICD10
+        - peserta.MAX(fkrtl.tarif_drugs)
+        - peserta.kab_kota_tempat_tinggal
+        - kode_INACBGs
+        - tipe_fkrtl
+        - peserta.provinsi_tempat_tinggal
+        - peserta.SUM(fktp.no_keluarga)
+        - peserta.MEAN(fkrtl.spesifikasi_kelompok_kasus)
+        - peserta.SUM(fkrtl.biaya_tagih)
+        - kab_kota_fkrtl
+        - peserta.MAX(fktp.jarak_hari_antar_kunjungan)
+        - peserta.SUM(fkrtl.no_keluarga)
+        - peserta.MIN(fkrtl.spesifikasi_kelompok_kasus)
+        - peserta.SUM(fkrtl.bobot)
+        - peserta.STD(fkrtl.biaya_tagih)
+        - peserta.SUM(fktp.bobot)
+        - peserta.MIN(fkrtl.biaya_tagih)
+        - peserta.gender
+        - peserta.COUNT(fktp)
+
+model:
+    max_depth: 5
+    learning_rate: 0.19938076268143845
+    n_estimators: 852
+    min_child_weight: 4
+    gamma: 0.45991504731344807
+    subsample: 0.9712843663363235
+    colsample_bytree: 0.9198254584974369
+    reg_alpha: 0.409069052705838
+    reg_lambda: 0.9827834053073584
