@@ -5,11 +5,13 @@ stages:
     - fkrtl_gcs_path
     - fktp_gcs_path
     - peserta_gcs_path
+    - fktp_stata_gcs_path
     deps:
     - src/data_loading.py
     outs:
     - data/raw/fkrtl.csv
     - data/raw/fktp.csv
+    - data/raw/fktp_decoded.csv
     - data/raw/peserta.csv
   data_validation:
     cmd: python src/data_validation.py
@@ -18,3 +20,17 @@ stages:
     - src/data_validation.py
     params:
     - data.raw_data_folder
+  data_cleaning:
+    cmd: python src/data_cleaning.py
+    deps:
+    - data/raw
+    - src/data_cleaning.py
+    params:
+    - data_cleaning.new_column_names_fkrtl
+    - data_cleaning.new_column_names_fktp
+    - data_cleaning.new_column_names_peserta
+    outs:
+    - data/cleaned/fkrtl.csv
+    - data/cleaned/fktp_decoded.csv
+    - data/cleaned/fktp_encoded.csv
+    - data/cleaned/peserta.csv

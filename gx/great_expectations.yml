@@ -87,27 +87,27 @@ fluent_datasources:
     assets:
       peserta_asset:
         type: dataframe
-        id: eaf86277-ba4a-4c26-9f00-3ea0549f80db
+        id: bba35db0-26e6-44b2-89db-5255f97843bc
         batch_metadata: {}
         batch_definitions:
           peserta_batch_definition:
-            id: 7a9ae76e-ed7d-4bbc-be70-2afccd9c9540
+            id: 2a5e90b7-2b25-4e93-a50a-a3fe296f9bac
             partitioner:
       fktp_asset:
         type: dataframe
-        id: 7552b0ef-cb30-45b4-8029-1aa2e875c413
+        id: 7ad73e00-457c-41ba-8b30-e14d3b760547
         batch_metadata: {}
         batch_definitions:
           fktp_batch_definition:
-            id: 14dfedc0-389c-4c3f-a6d1-eedd6f9b47c0
+            id: a70da39b-3acc-44d2-b4cc-3be82da904b7
             partitioner:
       fkrtl_asset:
         type: dataframe
-        id: 998cf710-2062-433a-8a4f-21ddcec2db98
+        id: 1a9e1f7b-b410-41ee-ad5e-2c37809ead7f
         batch_metadata: {}
         batch_definitions:
           fkrtl_batch_definition:
-            id: a8320247-9b7a-4edc-baf3-b0b4511d0617
+            id: abcd2cce-2dec-412c-854c-fc57b1a5570c
             partitioner:
 analytics_enabled:
 data_context_id: 98e0e1b6-0f95-4315-9054-e296d90c3d61

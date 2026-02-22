@@ -5,12 +5,13 @@ stages:
     deps:
     - path: src/data_loading.py
       hash: md5
-      md5: dd4fbe4c1924c8cef862933ae76e976d
-      size: 1127
+      md5: 8b9acc064e517a36ea5ef378dfb45a01
+      size: 1408
     params:
       params.yaml:
         fkrtl_gcs_path: gs://data-sample-bpjs/raw/dm_fkrtl.csv
         fktp_gcs_path: gs://data-sample-bpjs/raw/dm_fktp_kapitasi.csv
+        fktp_stata_gcs_path: gs://data-sample-bpjs/stata/DM2021_fktpkapitasi.dta
         peserta_gcs_path: gs://data-sample-bpjs/raw/dm_2021_kepesertaan.csv
     outs:
     - path: data/raw/fkrtl.csv
@@ -21,6 +22,10 @@ stages:
       hash: md5
       md5: be566ff30dd306a7579e1288d2af4dc7
       size: 190387866
+    - path: data/raw/fktp_decoded.csv
+      hash: md5
+      md5: 91819fcab9e2e15518f01f3dd049972b
+      size: 402519523
     - path: data/raw/peserta.csv
       hash: md5
       md5: 68c5df5cb1c31493774f5da9e63242a9
@@ -30,9 +35,9 @@ stages:
     deps:
     - path: data/raw
       hash: md5
-      md5: 150e4fe6562aaf176062a048bb6cf440.dir
-      size: 761574232
-      nfiles: 3
+      md5: efb837c1301fdfffe63fac76fa25716d.dir
+      size: 1164093755
+      nfiles: 4
     - path: src/data_validation.py
       hash: md5
       md5: b430bf732d00ac8853a47a366d752708
@@ -40,3 +45,136 @@ stages:
     params:
       params.yaml:
         data.raw_data_folder: ./data/raw
+  data_cleaning:
+    cmd: python src/data_cleaning.py
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: efb837c1301fdfffe63fac76fa25716d.dir
+      size: 1164093755
+      nfiles: 4
+    - path: src/data_cleaning.py
+      hash: md5
+      md5: 2033253b0fdc115e5b77bfad5fbb691f
+      size: 3728
+    params:
+      params.yaml:
+        data_cleaning.new_column_names_fkrtl:
+        - no_peserta
+        - no_keluarga
+        - bobot
+        - id_kunjungan_fktp
+        - id_kunjungan_fkrtl
+        - tanggal_datang
+        - tanggal_pulang
+        - provinsi_fkrtl
+        - kab_kota_fkrtl
+        - kepemilikan_fkrtl
+        - jenis_fkrtl
+        - tipe_fkrtl
+        - tingkat_pelayanan
+        - poli_fkrtl
+        - segmen_peserta
+        - kelas_iuran_premi
+        - status_pulang_peserta
+        - kode_nama_diagnosis_ICD10
+        - kode_diagnosis_ICD10
+        - kode_diagnosis
+        - nama_diagnosis
+        - kode_nama_diagnosis_primer_ICD10
+        - kode_diagnosis_primer_ICD10
+        - kode_diagnosis_primer
+        - nama_diagnosis_primer
+        - kode_INACBGs
+        - deskripsi_INACBGs
+        - kode_casemix
+        - kelompok_kasus
+        - spesifikasi_kelompok_kasus
+        - tingkat_keparahan_kelompok_kasus
+        - provinsi_perujuk
+        - kab_kota_perujuk
+        - kepemilikan_perujuk
+        - jenis_perujuk
+        - tipe_perujuk
+        - jenis_prosedur
+        - tarif_regional_INACBGs
+        - group_tarif_INACBGs
+        - kode_sub_acute
+        - tarif_sub_acute
+        - kode_procedures
+        - deskripsi_procedures
+        - tarif_procedures
+        - kode_prosthesis
+        - deskripsi_prosthesis
+        - tarif_prosthesis
+        - kode_investigation
+        - deskripsi_investigation
+        - tarif_investigation
+        - kode_drugs
+        - deskripsi_drugs
+        - tarif_drugs
+        - biaya_tagih
+        - biaya_verifikasi
+        data_cleaning.new_column_names_fktp:
+        - no_peserta
+        - no_keluarga
+        - bobot
+        - id_kunjungan_fktp
+        - tanggal_datang
+        - tanggal_pulang
+        - provinsi_fktp
+        - kab_kota_fktp
+        - kepemilikan_fktp
+        - jenis_fktp
+        - tipe_fktp
+        - tingkat_pelayanan
+        - poli_fktp
+        - segmen_peserta
+        - status_pulang_peserta
+        - kode_nama_diagnosis_ICD10
+        - kode_diagnosis_ICD10
+        - kode_diagnosis
+        - nama_diagnosis
+        - provinsi_fkrtl
+        - kab_kota_fkrtl
+        - kepemilikan_fkrtl
+        - jenis_fkrtl
+        - tipe_fkrtl
+        - poli_fkrtl
+        - jenis_kunjungan_fktp
+        data_cleaning.new_column_names_peserta:
+        - no_peserta
+        - no_keluarga
+        - tanggal_lahir
+        - hubungan_keluarga
+        - gender
+        - status_perkawinan
+        - kelas_rawat
+        - segmen_peserta
+        - provinsi_tempat_tinggal
+        - kab_kota_tempat_tinggal
+        - kepemilikan_faskes
+        - jenis_faskes
+        - provinsi_faskes
+        - kab_kota_faskes
+        - bobot
+        - tahun_sampel
+        - status_peserta
+        - tahun_meninggal
+    outs:
+    - path: data/cleaned/fkrtl.csv
+      hash: md5
+      md5: f1ec6eac155785df9a99f1d679c0b248
+      size: 618182031
+    - path: data/cleaned/fktp_decoded.csv
+      hash: md5
+      md5: 1b759e9c59206154d34ea34090a68f2f
+      size: 404148671
+    - path: data/cleaned/fktp_encoded.csv
+      hash: md5
+      md5: ece13f694c1c0f2e4e31a8f90f47dc8c
+      size: 191086202
+    - path: data/cleaned/peserta.csv
+      hash: md5
+      md5: cc333c14b3e2fc7ef1fca6492e8417c2
+      size: 24891354
