@@ -1,11 +1,11 @@
 {
   "data": {
     "asset": {
-      "id": "aaebbd0e-578c-4f98-aa4c-328e1baa0593",
+      "id": "eaf86277-ba4a-4c26-9f00-3ea0549f80db",
       "name": "peserta_asset"
     },
     "batch_definition": {
-      "id": "9aafcda6-0738-4e69-ae13-c4f47734346c",
+      "id": "7a9ae76e-ed7d-4bbc-be70-2afccd9c9540",
       "name": "peserta_batch_definition"
     },
     "datasource": {

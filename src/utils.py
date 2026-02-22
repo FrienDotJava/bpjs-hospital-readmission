@@ -17,7 +17,7 @@ def load_dataset_from_csv(source: Path) -> pd.DataFrame:
 def save_dataframe_to_csv(df: pd.DataFrame, path: Path):
     folder_path = path.parent
     os.makedirs(folder_path, exist_ok=True)
-    df.to_csv(path)
+    df.to_csv(path, index=False)
 
 
 def load_params(param_path: str = "params.yaml") -> dict:

@@ -15,23 +15,23 @@ stages:
     outs:
     - path: data/raw/fkrtl.csv
       hash: md5
-      md5: fb2a5fa33753f29775936d3e9ce0feac
-      size: 552060992
+      md5: c9813a2f558e228d657e2a95a5a244a2
+      size: 546385614
     - path: data/raw/fktp.csv
       hash: md5
-      md5: 5851711389424190c7549f375f8d7723
-      size: 198783349
+      md5: be566ff30dd306a7579e1288d2af4dc7
+      size: 190387866
     - path: data/raw/peserta.csv
       hash: md5
-      md5: 612e91cc605a62f11d20a5d8a9eee035
-      size: 25694115
+      md5: 68c5df5cb1c31493774f5da9e63242a9
+      size: 24800752
   data_validation:
     cmd: python src/data_validation.py
     deps:
     - path: data/raw
       hash: md5
-      md5: 4f3e10e5c2661b6c86ed7529ba1aa080.dir
-      size: 776538456
+      md5: 150e4fe6562aaf176062a048bb6cf440.dir
+      size: 761574232
       nfiles: 3
     - path: src/data_validation.py
       hash: md5
