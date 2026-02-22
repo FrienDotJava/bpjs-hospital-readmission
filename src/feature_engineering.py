@@ -35,6 +35,7 @@ def create_readmission_target(df_fkrtl: pd.DataFrame) -> pd.DataFrame:
     df_fkrtl = df_fkrtl.drop(columns=['tanggal_kunjungan_berikutnya'])
 
     df_fkrtl['lama_hari_kunjungan'] = (df_fkrtl['tanggal_pulang'] - df_fkrtl['tanggal_datang']).dt.days
+    df_fkrtl = df_fkrtl.sort_values(['no_peserta', 'tanggal_datang'])
     df_fkrtl['jml_kunjungan_fkrtl'] = df_fkrtl.groupby("no_peserta").cumcount()
 
     return df_fkrtl

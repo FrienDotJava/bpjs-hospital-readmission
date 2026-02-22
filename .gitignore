@@ -3,6 +3,7 @@ venv
 service-key.json
 data/
 artifacts/
+artifacts_/
 misc/
 __pycache__/
 test.py
