@@ -49,3 +49,21 @@ stages:
     - data/processed/train_final.parquet
     - data/processed/train.csv
     - data/processed/test.csv
+  model_training:
+    cmd: python src/model_training.py
+    deps:
+    - data/processed
+    - src/model_training.py
+    params:
+    - model.max_depth
+    - model.learning_rate
+    - model.n_estimators
+    - model.min_child_weight
+    - model.gamma
+    - model.subsample
+    - model.colsample_bytree
+    - model.reg_alpha
+    - model.reg_lambda
+    - model.scale_pos_weight
+    outs:
+    - artifacts/model.pkl

@@ -210,3 +210,6 @@ model:
     reg_alpha: 1.0400469731553887
     reg_lambda: 3.679890490436746
     scale_pos_weight: 9.450389134215227
+
+model_training:
+    model_path: './artifacts/model.pkl'

@@ -4,6 +4,7 @@ from pathlib import Path
 import os
 import yaml
 import pickle
+from xgboost import XGBClassifier
 
 load_dotenv()
 
@@ -75,3 +76,8 @@ def save_artifact(artifact, path: Path):
     os.makedirs(folder_path, exist_ok=True)
     with open(path, 'wb') as f:
         pickle.dump(artifact, f)
+
+
+def load_artifact(path: Path):
+    with open(path, 'rb') as f:
+        return pickle.load(f)
