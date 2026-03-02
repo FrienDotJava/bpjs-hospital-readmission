@@ -67,3 +67,11 @@ stages:
     - model.scale_pos_weight
     outs:
     - artifacts/model.pkl
+  model_evaluation:
+    cmd: python src/model_evaluation.py
+    deps:
+    - data/processed
+    - src/model_evaluation.py
+    outs:
+    - artifacts/confusion_matrix.jpg
+    - artifacts/metrics.json

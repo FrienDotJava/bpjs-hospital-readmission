@@ -1,16 +1,7 @@
 import pandas as pd
 from xgboost import XGBClassifier
 from utils import load_params, save_artifact, load_dataset_from_csv
-import matplotlib.pyplot as plt
-from sklearn.metrics import ConfusionMatrixDisplay, roc_auc_score, classification_report
 from pathlib import Path
-
-
-def save_cm(y_test, y_pred):
-    disp = ConfusionMatrixDisplay.from_predictions(y_test, y_pred, values_format="d")
-    disp.plot(cmap="Blues")
-    plt.savefig("artifacts/confusion_matrix.jpg", format="jpg", dpi=300, bbox_inches="tight")
-    plt.close()
 
 
 def split_xy(df: pd.DataFrame):

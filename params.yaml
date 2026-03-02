@@ -213,3 +213,8 @@ model:
 
 model_training:
     model_path: './artifacts/model.pkl'
+
+
+model_evaluation:
+    cm_path: './artifacts/confusion_matrix.jpg'
+    metrics_path: './artifacts/metrics.json'

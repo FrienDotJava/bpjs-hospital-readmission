@@ -288,8 +288,8 @@ stages:
       nfiles: 4
     - path: src/model_training.py
       hash: md5
-      md5: 0abb6c5c7e3b122267718815268b3bf3
-      size: 1392
+      md5: 844f124d351b4eecee705bf951ec296d
+      size: 1145
     params:
       params.yaml:
         model.colsample_bytree: 0.7789403085338865
@@ -307,3 +307,24 @@ stages:
       hash: md5
       md5: 1a86ea65bec1c0caaa7cc714b53165e4
       size: 509884
+  model_evaluation:
+    cmd: python src/model_evaluation.py
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: 10bdae5dc8dba685ffdab8c72c950c9e.dir
+      size: 13726604
+      nfiles: 4
+    - path: src/model_evaluation.py
+      hash: md5
+      md5: 98b2578eaa973efbcab1dad8ac3ca878
+      size: 2063
+    outs:
+    - path: artifacts/confusion_matrix.jpg
+      hash: md5
+      md5: 21b75ea0f0375471b53139a7f1658570
+      size: 83591
+    - path: artifacts/metrics.json
+      hash: md5
+      md5: f6986946b67bd1f8c4f95a95db957757
+      size: 176
