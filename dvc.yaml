@@ -45,7 +45,7 @@ stages:
     outs:
     - artifacts/scaler.pkl
     - data/feature_store/feature_store_peserta.csv
-    - data/interim/feature_matrix.csv
-    - data/processed/final_data.parquet
+    - data/processed/train_final.parquet
+    - data/processed/train_final.parquet
     - data/processed/train.csv
     - data/processed/test.csv

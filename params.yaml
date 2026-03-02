@@ -20,7 +20,8 @@ data:
     
     feature_store_path: "./data/feature_store/feature_store_peserta.csv"
     feature_matrix_path: "./data/interim/feature_matrix.csv"
-    final_data_path: "./data/processed/final_data.parquet"
+    train_final_path: "./data/processed/train_final.parquet"
+    test_final_path: "./data/processed/test_final.parquet"
     train_data_path: "./data/processed/train.csv"
     test_data_path: "./data/processed/test.csv"
 
@@ -199,12 +200,13 @@ feature_engineering:
         - peserta.COUNT(fktp)
 
 model:
-    max_depth: 5
-    learning_rate: 0.19938076268143845
-    n_estimators: 852
-    min_child_weight: 4
-    gamma: 0.45991504731344807
-    subsample: 0.9712843663363235
-    colsample_bytree: 0.9198254584974369
-    reg_alpha: 0.409069052705838
-    reg_lambda: 0.9827834053073584
+    max_depth: 4
+    learning_rate: 0.0806150438573846
+    n_estimators: 326
+    min_child_weight: 8
+    gamma: 1.522660739979919
+    subsample: 0.7160942655426387
+    colsample_bytree: 0.7789403085338865
+    reg_alpha: 1.0400469731553887
+    reg_lambda: 3.679890490436746
+    scale_pos_weight: 9.450389134215227

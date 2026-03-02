@@ -8,6 +8,25 @@ from sklearn.model_selection import train_test_split
 from pathlib import Path
 
 
+def split_raw_data(df_fkrtl, df_peserta, df_fktp, quantile=0.8):
+    """Split raw data by time BEFORE any feature engineering."""
+    cutoff = df_fkrtl['tanggal_pulang'].quantile(quantile)
+    print(f"Time cutoff: {cutoff}")
+
+    train_fkrtl = df_fkrtl[df_fkrtl['tanggal_pulang'] <= cutoff].copy()
+    test_fkrtl  = df_fkrtl[df_fkrtl['tanggal_pulang'] > cutoff].copy()
+
+    # Only keep peserta that appear in each split
+    train_peserta = df_peserta[df_peserta['no_peserta'].isin(train_fkrtl['no_peserta'])].copy()
+    test_peserta  = df_peserta[df_peserta['no_peserta'].isin(test_fkrtl['no_peserta'])].copy()
+
+    # Split fktp by same cutoff
+    train_fktp = df_fktp[df_fktp['tanggal_pulang'] <= cutoff].copy()
+    test_fktp  = df_fktp[df_fktp['tanggal_pulang'] > cutoff].copy()
+
+    return (train_fkrtl, train_peserta, train_fktp), (test_fkrtl, test_peserta, test_fktp)
+
+
 def filter_rawat_inap(df_fkrtl: pd.DataFrame) -> pd.DataFrame:
     """Filter FKRTL to inpatient cases only and sort by patient and visit date."""
     print("Filtering FKRTL to inpatient cases (rawat inap)...")
@@ -95,44 +114,32 @@ def merge_datasets(df_fkrtl: pd.DataFrame, df_peserta: pd.DataFrame, df_fktp: pd
     return df_merged
 
 
-def build_entityset_and_run_dfs(df_peserta: pd.DataFrame, df_fkrtl: pd.DataFrame, df_fktp: pd.DataFrame, params: dict) -> tuple:
-    """Build a featuretools EntitySet and run Deep Feature Synthesis."""
-    print("Building EntitySet and running Deep Feature Synthesis...")
-    df_fkrtl_2 = df_fkrtl.drop(columns=['jarak_hari_antar_kunjungan'])
+def build_entityset_and_run_dfs(df_peserta, df_fkrtl, df_fktp, params, feature_defs=None):
+    """Build EntitySet and run DFS. Reuse feature_defs for test set."""
+    df_fkrtl_2 = df_fkrtl.drop(columns=['jarak_hari_antar_kunjungan'], errors='ignore')
 
     es = ft.EntitySet(id="bpjs_data")
-
-    es = es.add_dataframe(
-        dataframe_name="peserta",
-        dataframe=df_peserta,
-        index="no_peserta"
-    )
-    es = es.add_dataframe(
-        dataframe_name="fkrtl",
-        dataframe=df_fkrtl_2,
-        index="id_kunjungan_fkrtl",
-        time_index="tanggal_datang"
-    )
-    es = es.add_dataframe(
-        dataframe_name="fktp",
-        dataframe=df_fktp,
-        index="id_kunjungan_fktp",
-        time_index="tanggal_datang"
-    )
-
+    es = es.add_dataframe(dataframe_name="peserta", dataframe=df_peserta, index="no_peserta")
+    es = es.add_dataframe(dataframe_name="fkrtl", dataframe=df_fkrtl_2,
+                          index="id_kunjungan_fkrtl", time_index="tanggal_datang")
+    es = es.add_dataframe(dataframe_name="fktp", dataframe=df_fktp,
+                          index="id_kunjungan_fktp", time_index="tanggal_datang")
     es = es.add_relationship("peserta", "no_peserta", "fkrtl", "no_peserta")
     es = es.add_relationship("peserta", "no_peserta", "fktp", "no_peserta")
 
-    feature_matrix, feature_defs = ft.dfs(
-        entityset=es,
-        target_dataframe_name="fkrtl",
-        agg_primitives=["sum", "mean", "max", "min", "std", "count"],
-        trans_primitives=["day", "month", "year", "weekday"],
-        max_depth=2
-    )
-    
-    save_dataframe_to_csv(feature_matrix, Path(params['data']['feature_matrix_path']))
-    print("Feature matrix saved.")
+    if feature_defs is None:
+        feature_matrix, feature_defs = ft.dfs(
+            entityset=es,
+            target_dataframe_name="fkrtl",
+            agg_primitives=["sum", "mean", "max", "min", "std", "count"],
+            trans_primitives=["day", "month", "year", "weekday"],
+            max_depth=2
+        )
+    else:
+        feature_matrix = ft.calculate_feature_matrix(
+            features=feature_defs,
+            entityset=es
+        )
 
     return feature_matrix, feature_defs
 
@@ -154,20 +161,27 @@ def remove_correlated_features(feature_matrix: pd.DataFrame, threshold: float = 
     return feature_matrix_reduced
 
 
-def create_feature_store(feature_matrix_reduced: pd.DataFrame, feature_matrix: pd.DataFrame, params: dict):
-    """Create and save the peserta-level feature store."""
+def create_feature_store(train_matrix: pd.DataFrame, params: dict):
+    """Create and save the peserta-level feature store from TRAIN data only."""
     FEATURE_STORE_COLS = params['feature_engineering']['feature_store_cols']
     print("Creating peserta feature store...")
-    features = feature_matrix_reduced.drop(columns=['no_peserta', 'no_keluarga'])
+
+    features = train_matrix.drop(columns=['no_peserta', 'no_keluarga'], errors='ignore')
+
     cat_cols = features.select_dtypes("category").columns
-    num_cols = features.select_dtypes("number").columns
     for col in cat_cols:
         features[col] = features[col].cat.codes
 
     feature_matrix_peserta = features[FEATURE_STORE_COLS].copy()
-    feature_matrix_peserta['no_peserta'] = feature_matrix['no_peserta']
-    feature_store_peserta = feature_matrix_peserta.groupby("no_peserta")[FEATURE_STORE_COLS].mean().reset_index()
-    feature_store_peserta = feature_store_peserta.fillna(0)
+    feature_matrix_peserta['no_peserta'] = train_matrix['no_peserta']
+
+    feature_store_peserta = (
+        feature_matrix_peserta
+        .groupby("no_peserta")[FEATURE_STORE_COLS]
+        .mean()
+        .reset_index()
+        .fillna(0)
+    )
 
     save_dataframe_to_csv(feature_store_peserta, Path(params['data']['feature_store_path']))
     print("Feature store saved.")
@@ -186,19 +200,11 @@ def select_final_features(feature_matrix_reduced: pd.DataFrame, params: dict) ->
     return final_data
 
 
-def split_and_scale(final_data: pd.DataFrame, params: dict):
-    """Split into train/test, scale numeric features, encode categoricals, and save."""
-    print("Splitting, scaling, and encoding data...")
-
+def split_and_scale(train, test, params):
+    """Scale and encode already-split data."""
     target_col = params['data']['label_column']
-    train, test = train_test_split(
-        final_data, test_size=0.2, random_state=42
-    )
 
-    num_cols = list(train.select_dtypes("number").columns)
-    if target_col in num_cols:
-        num_cols.remove(target_col)
-
+    num_cols = [c for c in train.select_dtypes("number").columns if c != target_col]
     cat_cols = list(train.select_dtypes("category").columns)
 
     scaler = StandardScaler()
@@ -228,18 +234,37 @@ def main():
 
     df_fkrtl = filter_rawat_inap(df_fkrtl)
     df_fkrtl = create_readmission_target(df_fkrtl)
-    df_peserta = enrich_peserta(df_peserta, df_fkrtl)
     df_fktp = create_fktp_features(df_fktp)
+    
+    (train_fkrtl, train_peserta, train_fktp), (test_fkrtl, test_peserta, test_fktp) = split_raw_data(df_fkrtl, df_peserta, df_fktp)
+    
+    train_peserta = enrich_peserta(train_peserta, train_fkrtl)
+    test_peserta  = enrich_peserta(test_peserta, test_fkrtl)
 
-    merge_datasets(df_fkrtl, df_peserta, df_fktp)
+    train_matrix, feature_defs = build_entityset_and_run_dfs(
+        train_peserta, train_fkrtl, train_fktp, params, feature_defs=None
+    )
+    test_matrix, _ = build_entityset_and_run_dfs(
+        test_peserta, test_fkrtl, test_fktp, params, feature_defs=feature_defs
+    )
 
-    feature_matrix, _ = build_entityset_and_run_dfs(df_peserta, df_fkrtl, df_fktp, params)
+    create_feature_store(train_matrix, params)
 
-    feature_matrix_reduced = remove_correlated_features(feature_matrix)
-    create_feature_store(feature_matrix_reduced, feature_matrix, params)
+    train_reduced = remove_correlated_features(train_matrix)
+    cols_to_keep = train_reduced.columns.tolist()
+    test_reduced = test_matrix[cols_to_keep]
 
-    final_data = select_final_features(feature_matrix_reduced, params)
-    split_and_scale(final_data, params)
+    SELECTED_COLS = params['feature_engineering']['selected_cols']
+    train_final = train_reduced[SELECTED_COLS].copy()
+    train_final['readmitted_30d'] = train_reduced['readmitted_30d']
+
+    test_final = test_reduced[SELECTED_COLS].copy()
+    test_final['readmitted_30d'] = test_reduced['readmitted_30d']
+
+    save_dataframe_to_parquet(train_final, Path(params['data']['train_final_path']))
+    save_dataframe_to_parquet(test_final, Path(params['data']['test_final_path']))
+
+    split_and_scale(train_final, test_final, params)
 
 
 if __name__ == "__main__":

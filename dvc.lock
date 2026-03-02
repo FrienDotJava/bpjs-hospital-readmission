@@ -188,8 +188,8 @@ stages:
       nfiles: 4
     - path: src/feature_engineering.py
       hash: md5
-      md5: 07ccd28b6eeef6646eeec92e8f9630be
-      size: 9934
+      md5: 4d3a94aced8b25e0792483c537ef1864
+      size: 11332
     params:
       params.yaml:
         feature_engineering.feature_store_cols:
@@ -260,25 +260,21 @@ stages:
     outs:
     - path: artifacts/scaler.pkl
       hash: md5
-      md5: 98bd04a2582af9c693cb1ea38fb4e409
+      md5: 5d6625a291a9fbf3b117d479e7caf2a0
       size: 1815
     - path: data/feature_store/feature_store_peserta.csv
       hash: md5
-      md5: d3ef9bf50737c8afad1ee9536b6bf984
-      size: 3092760
-    - path: data/interim/feature_matrix.csv
-      hash: md5
-      md5: f66296095d00a88cf1194e62dfb41d79
-      size: 41016370
-    - path: data/processed/final_data.parquet
-      hash: md5
-      md5: 7873001a33551ecdd337c6ee3490addb
-      size: 2458355
+      md5: 1e65aff32db3f74bb37230119e82cd9d
+      size: 2553939
     - path: data/processed/test.csv
       hash: md5
-      md5: 67683fb49696d2042430783003063d7c
-      size: 2294407
+      md5: 68d322fa0b3c76cccfae578a7d6b6074
+      size: 2147004
     - path: data/processed/train.csv
       hash: md5
-      md5: b039679936948663fec26794f83f068f
-      size: 9185741
+      md5: d93fb1ff1bd7276816cf232dddb317ae
+      size: 9140779
+    - path: data/processed/train_final.parquet
+      hash: md5
+      md5: aacd2f71d68ddbd8fbf5ef14b04b124c
+      size: 1961754
