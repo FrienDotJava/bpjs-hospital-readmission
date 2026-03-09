@@ -58,7 +58,20 @@ def load_fkrtl() -> pd.DataFrame | None:
         parse_dates=["tanggal_datang", "tanggal_pulang"],
         low_memory=False,
     )
-    return prepare_fkrtl(df_fkrtl_raw)
+    return prepare_fkrtl(df)
+
+
+@st.cache_data(show_spinner=False)
+def load_fkrtl_summary() -> dict | None:
+    path = DATA_DIR / "fkrtl.csv"
+    if not path.exists():
+        return None
+    df = pd.read_csv(path, low_memory=False)
+    return {
+        "rows": len(df),
+        "columns": len(df.columns),
+        "missing_pct": f"{df.isnull().mean().mean() * 100:.1f}%"
+    }
 
 
 @st.cache_data(show_spinner=False)
@@ -148,12 +161,9 @@ def kpi_row(metrics: list[dict]):
 # PAGE 1 - Overview
 if selected_page == PAGES[0]:
     df_peserta = load_peserta()
-    df_fkrtl_raw = load_fkrtl()
+    df_fkrtl = load_fkrtl()
     df_fktp = load_fktp()
-
-    df_fkrtl = None
-    if df_fkrtl_raw is not None:
-        df_fkrtl = prepare_fkrtl(df_fkrtl_raw)
+    fkrtl_summary = load_fkrtl_summary()
 
     st.title("Overview")
 
@@ -216,15 +226,13 @@ if selected_page == PAGES[0]:
                     "Missing (%)": f"{df_peserta.isnull().mean().mean() * 100:.1f}%",
                 }
             )
-        if df_fkrtl_raw is not None:
-            summary_rows.append(
-                {
-                    "Dataset": "FKRTL (Hospital Visits)",
-                    "Rows": len(df_fkrtl_raw),
-                    "Columns": len(df_fkrtl_raw.columns),
-                    "Missing (%)": f"{df_fkrtl_raw.isnull().mean().mean() * 100:.1f}%",
-                }
-            )
+        if fkrtl_summary is not None:
+            summary_rows.append({
+                "Dataset": "FKRTL (Hospital Visits)",
+                "Rows": fkrtl_summary["rows"],
+                "Columns": fkrtl_summary["columns"],
+                "Missing (%)": fkrtl_summary["missing_pct"],
+            })
         if df_fktp is not None:
             summary_rows.append(
                 {
@@ -496,11 +504,7 @@ elif selected_page == PAGES[2]:
 # PAGE 4 - Readmission Analysis
 elif selected_page == PAGES[3]:
     df_peserta = load_peserta()
-    df_fkrtl_raw = load_fkrtl()
-
-    df_fkrtl = None
-    if df_fkrtl_raw is not None:
-        df_fkrtl = prepare_fkrtl(df_fkrtl_raw)
+    df_fkrtl = load_fkrtl()
 
     st.title("🔄 Readmission Analysis")
     st.markdown("Analisis Pola Readmission.")
@@ -607,11 +611,7 @@ elif selected_page == PAGES[3]:
 # PAGE 5 - Cost Analysis
 elif selected_page == PAGES[4]:
     df_peserta = load_peserta()
-    df_fkrtl_raw = load_fkrtl()
-
-    df_fkrtl = None
-    if df_fkrtl_raw is not None:
-        df_fkrtl = prepare_fkrtl(df_fkrtl_raw)
+    df_fkrtl = load_fkrtl()
 
     st.title("💰 Cost Analysis")
     st.markdown("Analisis tagihan dan biaya prosedur.")
@@ -728,11 +728,7 @@ elif selected_page == PAGES[4]:
 # PAGE 6 - Geographic Analysis
 elif selected_page == PAGES[5]:
     df_peserta = load_peserta()
-    df_fkrtl_raw = load_fkrtl()
-
-    df_fkrtl = None
-    if df_fkrtl_raw is not None:
-        df_fkrtl = prepare_fkrtl(df_fkrtl_raw)
+    df_fkrtl = load_fkrtl()
 
     st.title("🗺️ Geographic Analysis")
     st.markdown("Informasi Kunjungan FKRTL dan Tingkat Readmission pada Tingkat Provinsi.")
