@@ -206,7 +206,7 @@ if selected_page == PAGES[0]:
                     "Not Readmitted (0)": COLOR_PRIMARY,
                     "Readmitted (1)": COLOR_DANGER,
                 },
-                title="30-Day Readmission Class Distribution",
+                title="Distribusi Readmission",
             )
             fig.update_traces(textposition="outside", textinfo="percent+label")
             st.plotly_chart(fig, use_container_width=True)
@@ -247,7 +247,7 @@ if selected_page == PAGES[0]:
         if summary_rows:
             st.dataframe(pd.DataFrame(summary_rows), use_container_width=True, hide_index=True)
         else:
-            st.info("No data files found. Please place CSV files in `data/cleaned/`.")
+            st.info("No data files found.")
 
     st.subheader("Statistik Fitur Numerik (FKRTL Rawat Inap)")
     if df_fkrtl is not None:
@@ -433,7 +433,7 @@ elif selected_page == PAGES[2]:
             )
             st.plotly_chart(fig, use_container_width=True)
 
-    # Top 15 diagnoses
+    # Top 15 diagnosis
     st.subheader("Top 15 Diagnosis Primer")
     diag_col = "nama_diagnosis_primer" if "nama_diagnosis_primer" in df_fkrtl.columns else "nama_diagnosis"
     if diag_col in df_fkrtl.columns:
@@ -477,10 +477,10 @@ elif selected_page == PAGES[2]:
         st.subheader("Distribusi Kepemilikan FKRTL")
         if "kepemilikan_fkrtl" in df_fkrtl.columns:
             counts = df_fkrtl["kepemilikan_fkrtl"].value_counts().reset_index()
-            counts.columns = ["ownership", "count"]
+            counts.columns = ["kepemilikan", "count"]
             fig = px.bar(
                 counts,
-                x="ownership",
+                x="kepemilikan",
                 y="count",
                 title="Kepemilikan FKRTL",
                 color_discrete_sequence=[COLOR_SUCCESS],
@@ -625,7 +625,7 @@ elif selected_page == PAGES[4]:
     cost_cols_available = [c for c in ["biaya_tagih", "biaya_verifikasi"] if c in df_fkrtl.columns]
 
     if not cost_cols_available:
-        st.info("No cost columns found in FKRTL data.")
+        st.info("Columns missing in FKRTL data.")
     else:
         st.subheader("Distribusi Biaya Tagih")
         if "biaya_tagih" in df_fkrtl.columns:
@@ -740,7 +740,7 @@ elif selected_page == PAGES[5]:
         st.stop()
 
     if "provinsi_fkrtl" not in df_fkrtl.columns:
-        st.info("Province column (`provinsi_fkrtl`) not found in FKRTL data.")
+        st.info("Province column not found in FKRTL data.")
         st.stop()
 
     st.subheader("Jumlah Kunjungan FKRTL berdasarkan Provinsi")
@@ -786,7 +786,7 @@ elif selected_page == PAGES[5]:
     st.subheader("Choropleth Map: Tingkat Readmission berdasarkan Provinsi")
     geojson = load_geojson()
     if geojson is None:
-        st.info("Geojson file not found!")
+        st.info("Geojson file not found.")
     else:
         try:
             name_key = "state"
