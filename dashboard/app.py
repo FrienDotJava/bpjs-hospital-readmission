@@ -1,10 +1,6 @@
-import os
+import streamlit as st
 import subprocess
-
-if not os.path.exists("data"):
-    subprocess.run(["dvc", "pull"], check=True)
-
-
+import os
 import warnings
 from pathlib import Path
 
@@ -12,7 +8,13 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-import streamlit as st
+
+@st.cache_resource
+def load_data():
+    if not os.path.exists("data"):
+        subprocess.run(["dvc", "pull"], check=True)
+
+load_data()
 
 warnings.filterwarnings("ignore")
 
