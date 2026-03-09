@@ -1,3 +1,10 @@
+import os
+import subprocess
+
+if not os.path.exists("data"):
+    subprocess.run(["dvc", "pull"], check=True)
+
+
 import warnings
 from pathlib import Path
 
