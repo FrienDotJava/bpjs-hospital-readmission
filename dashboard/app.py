@@ -11,13 +11,11 @@ import plotly.graph_objects as go
 
 DATA_FILE = "data/cleaned/peserta.csv"
 
-@st.cache_resource
-def ensure_data():
+if "data_ready" not in st.session_state:
     if not os.path.exists(DATA_FILE):
-        st.write("Downloading dataset from DVC...")
-        subprocess.run(["dvc", "pull"], check=True)
-
-ensure_data()
+        with st.spinner("Downloading dataset from DVC..."):
+            subprocess.run(["dvc", "pull"], check=True)
+    st.session_state["data_ready"] = True
 
 warnings.filterwarnings("ignore")
 
