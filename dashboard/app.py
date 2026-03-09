@@ -227,12 +227,14 @@ if selected_page == PAGES[0]:
                 }
             )
         if fkrtl_summary is not None:
-            summary_rows.append({
-                "Dataset": "FKRTL (Hospital Visits)",
-                "Rows": fkrtl_summary["rows"],
-                "Columns": fkrtl_summary["columns"],
-                "Missing (%)": fkrtl_summary["missing_pct"],
-            })
+            summary_rows.append(
+                {
+                    "Dataset": "FKRTL (Hospital Visits)",
+                    "Rows": fkrtl_summary["rows"],
+                    "Columns": fkrtl_summary["columns"],
+                    "Missing (%)": fkrtl_summary["missing_pct"],
+                }
+            )
         if df_fktp is not None:
             summary_rows.append(
                 {
