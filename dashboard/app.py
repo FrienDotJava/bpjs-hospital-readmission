@@ -58,7 +58,7 @@ def load_fkrtl() -> pd.DataFrame | None:
         parse_dates=["tanggal_datang", "tanggal_pulang"],
         low_memory=False,
     )
-    return df
+    return prepare_fkrtl(df_fkrtl_raw)
 
 
 @st.cache_data(show_spinner=False)
@@ -129,17 +129,6 @@ with st.sidebar:
     st.markdown("---")
     st.caption("Data: Sample Data BPJS 2021")
 
-# Load data
-with st.spinner("Loading data…"):
-    df_peserta = load_peserta()
-    df_fkrtl_raw = load_fkrtl()
-    df_fktp = load_fktp()
-
-# Prepare FKRTL
-df_fkrtl = None
-if df_fkrtl_raw is not None:
-    df_fkrtl = prepare_fkrtl(df_fkrtl_raw)
-
 
 def missing_data_warning(name: str):
     st.warning(
@@ -158,6 +147,14 @@ def kpi_row(metrics: list[dict]):
 
 # PAGE 1 - Overview
 if selected_page == PAGES[0]:
+    df_peserta = load_peserta()
+    df_fkrtl_raw = load_fkrtl()
+    df_fktp = load_fktp()
+
+    df_fkrtl = None
+    if df_fkrtl_raw is not None:
+        df_fkrtl = prepare_fkrtl(df_fkrtl_raw)
+
     st.title("Overview")
 
     n_patients = df_peserta["no_peserta"].nunique() if df_peserta is not None else "N/A"
@@ -254,6 +251,7 @@ if selected_page == PAGES[0]:
 
 # PAGE 2 - Patient Demographics
 elif selected_page == PAGES[1]:
+    df_peserta = load_peserta()
     st.title("👤 Patient Demographics")
     st.markdown("Analisis Peserta BPJS.")
 
@@ -367,6 +365,7 @@ elif selected_page == PAGES[1]:
 
 # PAGE 3 - FKRTL
 elif selected_page == PAGES[2]:
+    df_fkrtl = load_fkrtl()
     st.title("🏥 Kunjungan FKRTL")
     st.markdown("Analisis Kunjungan Faskes Rujukan Tingkat Lanjut.")
 
@@ -493,8 +492,16 @@ elif selected_page == PAGES[2]:
         )
         st.plotly_chart(fig, use_container_width=True)
 
+
 # PAGE 4 - Readmission Analysis
 elif selected_page == PAGES[3]:
+    df_peserta = load_peserta()
+    df_fkrtl_raw = load_fkrtl()
+
+    df_fkrtl = None
+    if df_fkrtl_raw is not None:
+        df_fkrtl = prepare_fkrtl(df_fkrtl_raw)
+
     st.title("🔄 Readmission Analysis")
     st.markdown("Analisis Pola Readmission.")
 
@@ -599,6 +606,13 @@ elif selected_page == PAGES[3]:
 
 # PAGE 5 - Cost Analysis
 elif selected_page == PAGES[4]:
+    df_peserta = load_peserta()
+    df_fkrtl_raw = load_fkrtl()
+
+    df_fkrtl = None
+    if df_fkrtl_raw is not None:
+        df_fkrtl = prepare_fkrtl(df_fkrtl_raw)
+
     st.title("💰 Cost Analysis")
     st.markdown("Analisis tagihan dan biaya prosedur.")
 
@@ -713,6 +727,13 @@ elif selected_page == PAGES[4]:
 
 # PAGE 6 - Geographic Analysis
 elif selected_page == PAGES[5]:
+    df_peserta = load_peserta()
+    df_fkrtl_raw = load_fkrtl()
+
+    df_fkrtl = None
+    if df_fkrtl_raw is not None:
+        df_fkrtl = prepare_fkrtl(df_fkrtl_raw)
+
     st.title("🗺️ Geographic Analysis")
     st.markdown("Informasi Kunjungan FKRTL dan Tingkat Readmission pada Tingkat Provinsi.")
 
@@ -796,6 +817,8 @@ elif selected_page == PAGES[5]:
 
 # PAGE 7 - FKTP
 elif selected_page == PAGES[6]:
+    df_fktp = load_fktp()
+
     st.title("🩺 Kunjungan FKTP")
     st.markdown("Analisis Kunjungan FKTP.")
 
