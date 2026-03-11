@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, LabelEncoder
 import pickle
 import featuretools as ft
 from utils import load_params, load_csv_parse_date, save_dataframe_to_csv, save_dataframe_to_parquet, save_artifact
@@ -225,6 +225,28 @@ def split_and_scale(train, test, params):
     print("Train and test sets saved.")
 
 
+def build_and_save_label_encoders(df: pd.DataFrame, params: dict):
+    CAT_COLS = params['feature_engineering']['cat_cols']
+    PESERTA_CAT_COLS = [
+        "peserta.status_peserta",
+        "peserta.provinsi_faskes",
+        "peserta.segmen_peserta",
+        "peserta.kab_kota_tempat_tinggal",
+        "peserta.provinsi_tempat_tinggal",
+        "peserta.gender",
+    ]
+    all_cat_cols = CAT_COLS + PESERTA_CAT_COLS
+    encoders: dict[str, LabelEncoder] = {}
+    for col in all_cat_cols:
+        le = LabelEncoder()
+        le.fit(df[col].astype(str))
+        encoders[col] = le
+
+    encoder_path = Path(params["encoder"]["encoder_path"])
+    save_artifact(encoders, encoder_path)
+    print(f"Label encoders saved to {encoder_path}")
+    return encoders
+
 def main():
     params = load_params()
 
@@ -260,6 +282,8 @@ def main():
 
     test_final = test_reduced[SELECTED_COLS].copy()
     test_final['readmitted_30d'] = test_reduced['readmitted_30d']
+
+    build_and_save_label_encoders(train_final, params)
 
     save_dataframe_to_parquet(train_final, Path(params['data']['train_final_path']))
     save_dataframe_to_parquet(test_final, Path(params['data']['test_final_path']))

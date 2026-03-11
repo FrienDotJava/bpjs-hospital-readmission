@@ -28,6 +28,9 @@ data:
 scaler:
     scaler_path: "./artifacts/scaler.pkl"
 
+encoder:
+    encoder_path: "./artifacts/label_encoders.pkl"
+
 data_cleaning:
     new_column_names_peserta:
         - no_peserta
@@ -198,6 +201,21 @@ feature_engineering:
         - peserta.MIN(fkrtl.biaya_tagih)
         - peserta.gender
         - peserta.COUNT(fktp)
+    cat_cols:
+        - status_pulang_peserta
+        - kode_nama_diagnosis_primer_ICD10
+        - kepemilikan_perujuk
+        - kode_casemix
+        - jenis_perujuk
+        - tipe_perujuk
+        - kepemilikan_fkrtl
+        - kode_nama_diagnosis_ICD10
+        - kode_INACBGs
+        - tipe_fkrtl
+        - kab_kota_fkrtl
+        - MONTH(tanggal_pulang)
+        - YEAR(tanggal_pulang)
+        - MONTH(tanggal_datang)
 
 model:
     max_depth: 4

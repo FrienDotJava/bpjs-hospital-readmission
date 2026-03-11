@@ -44,6 +44,7 @@ stages:
     - feature_engineering.selected_cols
     outs:
     - artifacts/scaler.pkl
+    - artifacts/label_encoders.pkl
     - data/feature_store/feature_store_peserta.csv
     - data/processed/train_final.parquet
     - data/processed/train_final.parquet
