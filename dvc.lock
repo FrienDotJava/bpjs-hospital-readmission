@@ -188,8 +188,8 @@ stages:
       nfiles: 4
     - path: src/feature_engineering.py
       hash: md5
-      md5: 4d3a94aced8b25e0792483c537ef1864
-      size: 11332
+      md5: 0017e6ba7f17ebd5f73c9de0ac586e99
+      size: 12182
     params:
       params.yaml:
         feature_engineering.feature_store_cols:
@@ -258,6 +258,10 @@ stages:
         - peserta.gender
         - peserta.COUNT(fktp)
     outs:
+    - path: artifacts/label_encoders.pkl
+      hash: md5
+      md5: 8697d35a177cfe4c2cfd5f50800ceca0
+      size: 71412
     - path: artifacts/scaler.pkl
       hash: md5
       md5: 5d6625a291a9fbf3b117d479e7caf2a0

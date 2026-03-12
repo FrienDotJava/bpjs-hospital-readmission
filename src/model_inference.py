@@ -1,13 +1,6 @@
 import pandas as pd
-import numpy as np
 from pathlib import Path
-from sklearn.preprocessing import LabelEncoder
-from utils import load_params, load_artifact, save_artifact, load_dataset_from_csv
-
-
-# ---------------------------------------------------------------------------
-# Column groups (must match feature_engineering.split_and_scale)
-# ---------------------------------------------------------------------------
+from utils import load_params, load_artifact, load_dataset_from_csv
 
 SCALER_COLS = [
     "peserta.STD(fkrtl.lama_hari_kunjungan)",
@@ -31,7 +24,6 @@ SCALER_COLS = [
     "peserta.COUNT(fktp)",
 ]
 
-# Peserta-level categorical columns (already encoded as numeric in feature store)
 PESERTA_CAT_COLS = [
     "peserta.status_peserta",
     "peserta.provinsi_faskes",
@@ -41,7 +33,6 @@ PESERTA_CAT_COLS = [
     "peserta.gender",
 ]
 
-# Peserta-level features that come from the feature store
 FEATURE_STORE_COLS = [
     "peserta.STD(fkrtl.lama_hari_kunjungan)",
     "peserta.SUM(fkrtl.jml_kunjungan_fkrtl)",
@@ -69,7 +60,6 @@ FEATURE_STORE_COLS = [
     "peserta.COUNT(fktp)",
 ]
 
-# Visit-level features extracted from the raw FKRTL row
 VISIT_LEVEL_COLS = [
     "jml_kunjungan_fkrtl",
     "status_pulang_peserta",
@@ -101,25 +91,12 @@ def load_inference_artifacts(params: dict):
 
 
 def preprocess_single(raw_data: dict, scaler, label_encoders, feature_store):
-    """Turn one raw FKRTL visit dict into a model-ready DataFrame row.
-
-    For **existing patients** (found in feature store):
-        Provide ``no_peserta`` — peserta-level features are looked up automatically.
-
-    For **new patients** (not in feature store):
-        Provide raw demographic fields instead:
-            gender, status_peserta, segmen_peserta,
-            provinsi_faskes, provinsi_tempat_tinggal,
-            kab_kota_tempat_tinggal, bobot
-        Aggregated history features (SUM, MEAN, STD, etc.) will default to 0.
-    """
     params = load_params()
     VISIT_CAT_COLS = params['feature_engineering']['cat_cols']
 
     tanggal_datang = pd.to_datetime(raw_data["tanggal_datang"])
     tanggal_pulang = pd.to_datetime(raw_data["tanggal_pulang"])
 
-    # --- Build visit-level feature dict ---
     visit = {
         "jml_kunjungan_fkrtl": raw_data.get("jml_kunjungan_fkrtl", 0),
         "status_pulang_peserta": raw_data["status_pulang_peserta"],
@@ -138,7 +115,6 @@ def preprocess_single(raw_data: dict, scaler, label_encoders, feature_store):
         "kab_kota_fkrtl": raw_data["kab_kota_fkrtl"],
     }
 
-    # --- Look up peserta-level features ---
     no_peserta = raw_data.get("no_peserta")
     peserta_row = None
     if no_peserta is not None:
@@ -149,13 +125,10 @@ def preprocess_single(raw_data: dict, scaler, label_encoders, feature_store):
     is_new_patient = peserta_row is None
 
     if not is_new_patient:
-        # Existing patient: use feature store values directly
         peserta_features = peserta_row.iloc[0].to_dict()
     else:
-        # New patient: build peserta-level features from raw demographics
         peserta_features = _build_new_patient_features(raw_data)
 
-    # Combine visit-level + peserta-level features
     all_feature_cols = SCALER_COLS + VISIT_CAT_COLS + PESERTA_CAT_COLS
     row: dict = {}
     for col in all_feature_cols:
@@ -164,13 +137,10 @@ def preprocess_single(raw_data: dict, scaler, label_encoders, feature_store):
         elif col in peserta_features:
             row[col] = peserta_features[col]
         else:
-            row[col] = 0  # no history for new patients
+            row[col] = 0
 
     df = pd.DataFrame([row])
 
-    # --- Encode categorical columns ---
-    # For new patients, peserta cat cols are raw strings and need encoding.
-    # For existing patients, peserta cat cols are already numeric from feature store.
     cols_to_encode = VISIT_CAT_COLS + (PESERTA_CAT_COLS if is_new_patient else [])
     for col in cols_to_encode:
         le = label_encoders[col]
@@ -181,15 +151,12 @@ def preprocess_single(raw_data: dict, scaler, label_encoders, feature_store):
             print(f"Warning: unseen category '{val_str}' in column '{col}', assigning -1")
             df[col] = -1
 
-    # Peserta-level category features from feature store are already numeric
     if not is_new_patient:
         for col in PESERTA_CAT_COLS:
             df[col] = df[col].astype(int)
 
-    # --- Scale numeric columns ---
     df[SCALER_COLS] = scaler.transform(df[SCALER_COLS])
 
-    # Reorder columns to match training order
     selected_cols = params["feature_engineering"]["selected_cols"]
     df = df[selected_cols]
 
@@ -197,12 +164,6 @@ def preprocess_single(raw_data: dict, scaler, label_encoders, feature_store):
 
 
 def _build_new_patient_features(raw_data: dict) -> dict:
-    """Build peserta-level features from raw demographics for a new patient.
-
-    Aggregated history features default to 0 (no prior visits).
-    Categorical features are kept as raw strings for label encoding.
-    """
-    # Map raw demographic keys -> model feature column names
     return {
         "peserta.gender": raw_data.get("gender", "LAKI-LAKI"),
         "peserta.status_peserta": raw_data.get("status_peserta", "AKTIF"),
@@ -210,7 +171,6 @@ def _build_new_patient_features(raw_data: dict) -> dict:
         "peserta.provinsi_faskes": raw_data.get("provinsi_faskes", "JAWA BARAT"),
         "peserta.provinsi_tempat_tinggal": raw_data.get("provinsi_tempat_tinggal", "JAWA BARAT"),
         "peserta.kab_kota_tempat_tinggal": raw_data.get("kab_kota_tempat_tinggal", "BANDUNG"),
-        # Aggregated history features → 0 for new patients
         "peserta.STD(fkrtl.lama_hari_kunjungan)": 0,
         "peserta.SUM(fkrtl.jml_kunjungan_fkrtl)": 0,
         "peserta.SUM(fkrtl.lama_hari_kunjungan)": 0,
@@ -244,7 +204,6 @@ def predict_single(raw_data: dict):
 
 
 def main():
-    # --- Example 1: Existing patient (looked up from feature store) ---
     print("=" * 50)
     print("Example 1: Existing patient (no_peserta=6368)")
     print("=" * 50)
@@ -269,13 +228,11 @@ def main():
     print(f"Prediction: {'Readmitted' if pred == 1 else 'Not Readmitted'}")
     print(f"Probability of readmission: {prob:.4f}")
 
-    # --- Example 2: New patient (no prior visit history) ---
     print()
     print("=" * 50)
     print("Example 2: New patient (no prior visit history)")
     print("=" * 50)
     new_patient = {
-        # No no_peserta — or unknown ID not in feature store
         "tanggal_datang": "2021-06-01",
         "tanggal_pulang": "2021-06-05",
         "status_pulang_peserta": "Sehat",
@@ -289,7 +246,6 @@ def main():
         "kode_INACBGs": "J-4-16-I",
         "tipe_fkrtl": "RS Kelas C",
         "kab_kota_fkrtl": "SIDOARJO",
-        # Raw demographics for new patient
         "gender": "PEREMPUAN",
         "status_peserta": "AKTIF",
         "segmen_peserta": "PPU",
