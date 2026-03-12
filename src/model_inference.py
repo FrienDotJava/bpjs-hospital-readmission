@@ -1,3 +1,5 @@
+import math
+
 import pandas as pd
 from pathlib import Path
 from utils import load_params, load_artifact, load_dataset_from_csv
@@ -98,7 +100,6 @@ def preprocess_single(raw_data: dict, scaler, label_encoders, feature_store):
     tanggal_pulang = pd.to_datetime(raw_data["tanggal_pulang"])
 
     visit = {
-        "jml_kunjungan_fkrtl": raw_data.get("jml_kunjungan_fkrtl", 0),
         "status_pulang_peserta": raw_data["status_pulang_peserta"],
         "MONTH(tanggal_pulang)": tanggal_pulang.month,
         "YEAR(tanggal_pulang)": tanggal_pulang.year,
@@ -126,8 +127,14 @@ def preprocess_single(raw_data: dict, scaler, label_encoders, feature_store):
 
     if not is_new_patient:
         peserta_features = peserta_row.iloc[0].to_dict()
+        # Derive jml_kunjungan_fkrtl from patient history.
+        # cumcount sums to n*(n-1)/2 where n = total past visits.
+        cum_sum = peserta_features.get("peserta.SUM(fkrtl.jml_kunjungan_fkrtl)", 0)
+        n_visits = int((1 + math.sqrt(1 + 8 * cum_sum)) / 2)
+        visit["jml_kunjungan_fkrtl"] = n_visits
     else:
         peserta_features = _build_new_patient_features(raw_data)
+        visit["jml_kunjungan_fkrtl"] = 0
 
     all_feature_cols = SCALER_COLS + VISIT_CAT_COLS + PESERTA_CAT_COLS
     row: dict = {}
