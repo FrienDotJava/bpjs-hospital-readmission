@@ -3,6 +3,10 @@ import math
 import pandas as pd
 from pathlib import Path
 from utils import load_params, load_artifact, load_dataset_from_csv
+import pickle
+import dagshub
+import os
+import requests
 
 SCALER_COLS = [
     "peserta.STD(fkrtl.lama_hari_kunjungan)",
@@ -81,7 +85,19 @@ VISIT_LEVEL_COLS = [
 ]
 
 def load_inference_artifacts(params: dict):
-    model = load_artifact(Path(params["model_training"]["model_path"]))
+    REPO_URL = params['inference']['repo_url']
+    MODEL_PATH = params['inference']['model_path']
+
+    token = os.environ["DAGSHUB_USER_TOKEN"]
+    username = os.environ.get("DAGSHUB_USERNAME", "FrienDotJava")
+
+    url = f"https://dagshub.com/FrienDotJava/bpjs-hospital-readmission/raw/main/{MODEL_PATH}"
+    
+    response = requests.get(url, auth=(username, token))
+    response.raise_for_status()
+
+    model = pickle.loads(response.content)
+
     scaler = load_artifact(Path(params["scaler"]["scaler_path"]))
 
     encoder_path = Path(params["encoder"]["encoder_path"])

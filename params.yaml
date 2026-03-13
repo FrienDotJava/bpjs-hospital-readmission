@@ -236,3 +236,8 @@ model_training:
 model_evaluation:
     cm_path: './artifacts/confusion_matrix.jpg'
     metrics_path: './artifacts/metrics.json'
+
+
+inference:
+    repo_url: https://dagshub.com/FrienDotJava/bpjs-hospital-readmission
+    model_path: artifacts/model.pkl
