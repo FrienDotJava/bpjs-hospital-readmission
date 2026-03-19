@@ -1,12 +1,13 @@
 import math
 
 import pandas as pd
-from pathlib import Path
-from utils import load_params, load_artifact, load_dataset_from_csv
+from utils import load_params
 import pickle
-import dagshub
 import os
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 SCALER_COLS = [
     "peserta.STD(fkrtl.lama_hari_kunjungan)",
@@ -85,25 +86,35 @@ VISIT_LEVEL_COLS = [
 ]
 
 def load_inference_artifacts(params: dict):
-    REPO_URL = params['inference']['repo_url']
     MODEL_PATH = params['inference']['model_path']
+    SCALER_PATH = params['inference']['scaler_path']
+    ENCODER_PATH = params['inference']['encoder_path']
+    FEATURE_STORE_PATH = params['inference']['feature_store_path']
 
     token = os.environ["DAGSHUB_USER_TOKEN"]
     username = os.environ.get("DAGSHUB_USERNAME", "FrienDotJava")
 
-    url = f"https://dagshub.com/FrienDotJava/bpjs-hospital-readmission/raw/main/{MODEL_PATH}"
-    
-    response = requests.get(url, auth=(username, token))
-    response.raise_for_status()
+    model_url = f"https://dagshub.com/FrienDotJava/bpjs-hospital-readmission/raw/main/{MODEL_PATH}"
+    model_response = requests.get(model_url, auth=(username, token))
+    model_response.raise_for_status()
+    model = pickle.loads(model_response.content)
 
-    model = pickle.loads(response.content)
+    scaler_url = f"https://dagshub.com/FrienDotJava/bpjs-hospital-readmission/raw/main/{SCALER_PATH}"
+    scaler_response = requests.get(scaler_url, auth=(username, token))
+    scaler_response.raise_for_status()
+    scaler = pickle.loads(scaler_response.content)
 
-    scaler = load_artifact(Path(params["scaler"]["scaler_path"]))
+    encoder_url = f"https://dagshub.com/FrienDotJava/bpjs-hospital-readmission/raw/main/{ENCODER_PATH}"
+    encoder_response = requests.get(encoder_url, auth=(username, token))
+    encoder_response.raise_for_status()
+    label_encoders = pickle.loads(encoder_response.content)
 
-    encoder_path = Path(params["encoder"]["encoder_path"])
-    label_encoders = load_artifact(encoder_path)
+    encoder_url = f"https://dagshub.com/FrienDotJava/bpjs-hospital-readmission/raw/main/{ENCODER_PATH}"
+    encoder_response = requests.get(encoder_url, auth=(username, token))
+    encoder_response.raise_for_status()
+    label_encoders = pickle.loads(encoder_response.content)
 
-    feature_store = load_dataset_from_csv(Path(params["data"]["feature_store_path"]))
+    feature_store = pd.read_csv(f"https://dagshub.com/FrienDotJava/bpjs-hospital-readmission/raw/main/{FEATURE_STORE_PATH}")
 
     return model, scaler, label_encoders, feature_store
 

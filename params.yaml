@@ -241,3 +241,6 @@ model_evaluation:
 inference:
     repo_url: https://dagshub.com/FrienDotJava/bpjs-hospital-readmission
     model_path: artifacts/model.pkl
+    scaler_path: artifacts/scaler.pkl
+    encoder_path: artifacts/label_encoders.pkl
+    feature_store_path: data/feature_store/feature_store_peserta.csv
