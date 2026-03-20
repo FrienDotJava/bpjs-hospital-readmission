@@ -10,6 +10,7 @@ from pydantic import BaseModel
 
 from src.model_inference import load_inference_artifacts, preprocess_single
 from src.utils import load_params
+from fastapi.middleware.cors import CORSMiddleware
 
 
 class PredictionRequest(BaseModel):
@@ -65,6 +66,13 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],   # ⚠️ dev only — lock this down before production
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/health")
 def health_check():
