@@ -349,12 +349,12 @@ API documentation: `http://localhost:8000/docs`
 **XGBoost Classifier Results** (on test set):
 
 ### Classification Metrics
-- **ROC-AUC Score**: 0.956 — Excellent discrimination between readmitted and non-readmitted patients
-- **Recall (Sensitivity)**: 92.3% — Identifies 923 out of 1000 actual readmission cases
-- **Precision**: 45.1% — Of predicted readmissions, 451 are true positives per 1000 predictions
-- **F1-Score (Class 1)**: 0.606 — Balanced metric accounting for precision-recall tradeoff
-- **Macro F1-Score**: 0.756 — Overall performance across both classes
-- **Accuracy**: 84.7% — Correct predictions on overall dataset
+- **ROC-AUC Score**: 0.956 -> Excellent discrimination between readmitted and non-readmitted patients
+- **Recall (Sensitivity)**: 92.3% -> Identifies 923 out of 1000 actual readmission cases
+- **Precision**: 45.1% -> Of predicted readmissions, 451 are true positives per 1000 predictions
+- **F1-Score (Class 1)**: 0.606 -> Balanced metric accounting for precision-recall tradeoff
+- **Macro F1-Score**: 0.756 -> Overall performance across both classes
+- **Accuracy**: 84.7% -> Correct predictions on overall dataset
 
 ### Confusion Matrix Analysis
 Based on test set of 5,530 patients:
@@ -366,11 +366,11 @@ Based on test set of 5,530 patients:
 | **Total** | 4,091 | 1,439 | 5,530 |
 
 **Key Insights:**
-- **High Recall (92.3%)**: The model catches 92% of patients at risk of readmission—critical for clinical early intervention
+- **High Recall (92.3%)**: The model catches 92% of patients at risk of readmission, critical for clinical early intervention
 - **Lower Precision (45.1%)**: Among patients flagged as high-risk, only 45% will actually be readmitted. This is expected and acceptable for healthcare risk models (better to over-predict and prevent harm than miss at-risk patients)
 - **True Positives**: 649 patients correctly identified as readmission risk
-- **False Negatives**: Only 54 missed readmission cases—very low, prioritizing patient safety
-- **False Positives**: 790 patients flagged as high-risk but did not readmit—acceptable overhead for preventive care programs
+- **False Negatives**: Only 54 missed readmission cases -> very low, prioritizing patient safety
+- **False Positives**: 790 patients flagged as high-risk but did not readmit -> acceptable overhead for preventive care programs
 - **True Negatives**: 4,037 patients correctly identified as low-risk
 
 ### Clinical Interpretation
