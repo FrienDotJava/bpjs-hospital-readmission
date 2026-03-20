@@ -347,14 +347,37 @@ API documentation: `http://localhost:8000/docs`
 ## Model Performance
 
 **XGBoost Classifier Results** (on test set):
-- **Accuracy**: Evaluation metrics available in `artifacts/metrics.json`
-- **AUC-PR**: Focus metric for imbalanced readmission prediction
-- **Confusion Matrix**: Visualized in `artifacts/confusion_matrix.jpg`
 
-View detailed metrics:
-```bash
-cat artifacts/metrics.json
-```
+### Classification Metrics
+- **ROC-AUC Score**: 0.956 — Excellent discrimination between readmitted and non-readmitted patients
+- **Recall (Sensitivity)**: 92.3% — Identifies 923 out of 1000 actual readmission cases
+- **Precision**: 45.1% — Of predicted readmissions, 451 are true positives per 1000 predictions
+- **F1-Score (Class 1)**: 0.606 — Balanced metric accounting for precision-recall tradeoff
+- **Macro F1-Score**: 0.756 — Overall performance across both classes
+- **Accuracy**: 84.7% — Correct predictions on overall dataset
+
+### Confusion Matrix Analysis
+Based on test set of 5,530 patients:
+
+|  | Predicted No Readmission | Predicted Readmission | Total |
+|---|---|---|---|
+| **Actual No Readmission** | 4,037 (TN) | 790 (FP) | 4,827 |
+| **Actual Readmission** | 54 (FN) | 649 (TP) | 703 |
+| **Total** | 4,091 | 1,439 | 5,530 |
+
+**Key Insights:**
+- **High Recall (92.3%)**: The model catches 92% of patients at risk of readmission—critical for clinical early intervention
+- **Lower Precision (45.1%)**: Among patients flagged as high-risk, only 45% will actually be readmitted. This is expected and acceptable for healthcare risk models (better to over-predict and prevent harm than miss at-risk patients)
+- **True Positives**: 649 patients correctly identified as readmission risk
+- **False Negatives**: Only 54 missed readmission cases—very low, prioritizing patient safety
+- **False Positives**: 790 patients flagged as high-risk but did not readmit—acceptable overhead for preventive care programs
+- **True Negatives**: 4,037 patients correctly identified as low-risk
+
+### Clinical Interpretation
+This model is well-suited for **high-sensitivity screening scenarios** where:
+- Missing a readmission case (false negative) is more costly than over-flagging low-risk patients
+- Early intervention programs can tolerate some false positives
+- The 92% recall ensures most at-risk patients are identified despite moderate precision
 
 ---
 
