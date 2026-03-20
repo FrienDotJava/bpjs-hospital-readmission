@@ -2,7 +2,7 @@
 
 A machine learning project predicting 30-day hospital readmission rates for BPJS (Indonesia's national health insurance) patients. Built with a production-grade ML pipeline, interactive dashboards, and web applications for model inference.
 
-## 📋 Project Overview
+## Project Overview
 
 Hospital readmission is a critical healthcare indicator that impacts patient outcomes and healthcare costs. This project develops a predictive model using historical patient data from BPJS to identify high-risk patients who are likely to be readmitted within 30 days of discharge.
 
@@ -23,7 +23,7 @@ Hospital readmission is a critical healthcare indicator that impacts patient out
 
 ---
 
-## 🚀 Live Applications
+## Live Applications
 
 Interact with the model and explore the data through these applications:
 
@@ -51,7 +51,7 @@ Interact with the model and explore the data through these applications:
 
 ---
 
-## 🏗️ Project Architecture
+## Project Architecture
 
 ### Directory Structure
 ```
@@ -108,7 +108,7 @@ data_loading → data_validation → data_cleaning → feature_engineering → m
 
 ---
 
-## 🔧 Tech Stack
+## Tech Stack
 
 ### Core ML & Data Processing
 - **XGBoost**: Gradient boosting classifier for binary readmission prediction
@@ -151,7 +151,7 @@ data_loading → data_validation → data_cleaning → feature_engineering → m
 
 ---
 
-## 📊 Methodology
+## Methodology
 
 ### Feature Engineering
 The project creates two types of features:
@@ -198,7 +198,7 @@ Tuned using Optuna with cross-validation:
 
 ---
 
-## ⚡ Key Challenges & Solutions
+## Key Challenges & Solutions
 
 ### 1. **Class Imbalance**
 **Challenge**: Readmission events are rare (~10-15% of cases), causing the model to be biased toward negative class.
@@ -273,7 +273,7 @@ Tuned using Optuna with cross-validation:
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Python 3.9+
@@ -344,7 +344,7 @@ API documentation: `http://localhost:8000/docs`
 
 ---
 
-## 📈 Model Performance
+## Model Performance
 
 **XGBoost Classifier Results** (on test set):
 - **Accuracy**: Evaluation metrics available in `artifacts/metrics.json`
@@ -358,7 +358,7 @@ cat artifacts/metrics.json
 
 ---
 
-## 🔍 Exploratory Data Analysis
+## Exploratory Data Analysis
 
 Key insights from EDA:
 - Readmission rates vary by patient demographics and geographic location
@@ -371,7 +371,7 @@ See [dashboard README](dashboard/README.md) for interactive exploration.
 
 ---
 
-## 📝 Notebooks
+## Notebooks
 
 The `notebooks/` folder contains a complete narrative of the project:
 
@@ -389,7 +389,7 @@ The `notebooks/` folder contains a complete narrative of the project:
 
 ---
 
-## 🔧 Configuration
+## Configuration
 
 ### Parameters
 All configuration is in `params.yaml`:
@@ -405,7 +405,7 @@ All configuration is in `params.yaml`:
 
 ---
 
-## 📊 Great Expectations Validation
+## Great Expectations Validation
 
 Data quality is ensured through Great Expectations configurations:
 
@@ -427,7 +427,7 @@ open gx/uncommitted/data_docs/local_site/index.html
 
 ---
 
-## 🎯 Use Cases
+## Use Cases
 
 1. **Clinical Risk Stratification**: Identify high-risk patients for early intervention programs
 2. **Resource Planning**: Allocate beds and staff based on readmission forecasts
@@ -437,13 +437,13 @@ open gx/uncommitted/data_docs/local_site/index.html
 
 ---
 
-## 📄 License & Attribution
+## License & Attribution
 
 This project uses 2021 BPJS sample data for research and educational purposes.
 
 ---
 
-## 📚 References & Resources
+## References & Resources
 
 - **XGBoost Documentation**: https://xgboost.readthedocs.io/
 - **DVC ML Pipeline Docs**: https://dvc.org/
