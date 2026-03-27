@@ -6,6 +6,12 @@ from model_training import split_xy
 import json
 import os
 import mlflow
+from evidently import Report
+from evidently.metrics import *
+from evidently.presets import *
+from evidently import Dataset
+from evidently import DataDefinition
+from evidently import BinaryClassification
 
 def save_cm(y_test, y_pred, path):
     disp = ConfusionMatrixDisplay.from_predictions(y_test, y_pred, values_format="d")
@@ -31,10 +37,50 @@ def save_metrics(metrics: dict, path: Path):
     print(f"Metrics saved at {path}")
 
 
+def evaluate_and_monitor(model, X_train, y_train, X_test, y_test, params):
+    train_predictions = model.predict(X_train)
+    test_predictions = model.predict(X_test)
+    
+    reference_data = X_train.copy()
+    reference_data['target'] = y_train
+    reference_data['prediction'] = train_predictions
+
+    current_data = X_test.copy()
+    current_data['target'] = y_test
+    current_data['prediction'] = test_predictions
+
+    definition = DataDefinition(
+        classification=[BinaryClassification(
+            target="target",
+            prediction_labels="prediction")],
+        categorical_columns=["target", "prediction"])
+
+    reference_data = Dataset.from_pandas(
+        reference_data,
+        data_definition=definition
+    )
+    current_data = Dataset.from_pandas(
+        current_data,
+        data_definition=definition
+    )
+
+    report = Report([
+        DataDriftPreset(), 
+        ClassificationPreset()
+    ])
+
+    result = report.run(reference_data=reference_data, current_data=current_data)
+
+    report_path = params['model_evaluation']['evidently_report_path']
+    result.save_html(report_path)
+    print(f"Evidently report generated at: {report_path}")
+
+
 def main():
     params = load_params()
     model_path = params['model_training']['model_path']
     test_data_path = params['data']['test_data_path']
+    train_data_path = params['data']['train_data_path']
     cm_path = params['model_evaluation']['cm_path']
     metrics_path = params['model_evaluation']['metrics_path']
 
@@ -43,7 +89,12 @@ def main():
     test = load_dataset_from_csv(Path(test_data_path))
     X_test, y_test = split_xy(test)
 
+    train = load_dataset_from_csv(Path(train_data_path))
+    X_train, y_train = split_xy(train)
+
     y_pred, probs = get_predictions(model, X_test)
+
+    evaluate_and_monitor(model, X_train, y_train, X_test, y_test, params)
 
     run_id = load_json_to_dict(Path("misc/latest_run.json"))['run_id']
     with mlflow.start_run(run_id=run_id):

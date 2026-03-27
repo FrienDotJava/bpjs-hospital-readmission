@@ -76,3 +76,4 @@ stages:
     outs:
     - artifacts/confusion_matrix.jpg
     - artifacts/metrics.json
+    - reports/evidently_evaluation_report.html

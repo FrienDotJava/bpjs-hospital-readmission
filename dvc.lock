@@ -321,8 +321,8 @@ stages:
       nfiles: 4
     - path: src/model_evaluation.py
       hash: md5
-      md5: 30026962e6d025120f21bbea12a06979
-      size: 2329
+      md5: c9bb37d856a7c406f97ddc3b23fe43b1
+      size: 3989
     outs:
     - path: artifacts/confusion_matrix.jpg
       hash: md5
@@ -332,3 +332,7 @@ stages:
       hash: md5
       md5: f6986946b67bd1f8c4f95a95db957757
       size: 176
+    - path: reports/evidently_evaluation_report.html
+      hash: md5
+      md5: ead6588cd0cef60d99f20960f01bca8f
+      size: 5727492

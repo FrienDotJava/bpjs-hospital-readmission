@@ -236,6 +236,7 @@ model_training:
 model_evaluation:
     cm_path: './artifacts/confusion_matrix.jpg'
     metrics_path: './artifacts/metrics.json'
+    evidently_report_path: './reports/evidently_evaluation_report.html'
 
 
 inference:
