@@ -1,8 +1,11 @@
 import pandas as pd
 from xgboost import XGBClassifier
-from utils import load_params, save_artifact, load_dataset_from_csv
+from utils import load_params, save_artifact, load_dataset_from_csv, save_dict_to_json
 from pathlib import Path
+import dagshub
+import mlflow
 
+dagshub.init(repo_owner='FrienDotJava', repo_name='bpjs-hospital-readmission', mlflow=True)
 
 def split_xy(df: pd.DataFrame):
     X = df.drop(columns=['readmitted_30d'])
@@ -30,12 +33,25 @@ def main():
 
     X_train, y_train = split_xy(train)
 
-    model = init_model(model_params)
-    train_model(model, X_train, y_train)
+    mlflow.set_experiment("Final")
+    with mlflow.start_run() as run:
+        model = init_model(model_params)
+        train_model(model, X_train, y_train)
 
-    print("Saving model...")
-    save_artifact(model,Path(model_path))
-    print("Model saved...")
+        print("Saving model...")
+        save_artifact(model,Path(model_path))
+        
+        mlflow.xgboost.log_model(
+            xgb_model=model, 
+            artifact_path="model",
+            registered_model_name="Final_XGB"
+        )
+        print("Model saved...")
+
+        mlflow.log_params(model_params)
+
+        metadata = {"run_id": run.info.run_id}
+        save_dict_to_json(metadata, Path("misc/latest_run.json"))
 
 
 if __name__ == "__main__":

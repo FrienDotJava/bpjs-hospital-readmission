@@ -6,6 +6,9 @@ import pickle
 import os
 import requests
 from dotenv import load_dotenv
+import mlflow
+import dagshub
+dagshub.init(repo_owner='FrienDotJava', repo_name='bpjs-hospital-readmission', mlflow=True)
 
 load_dotenv()
 
@@ -94,10 +97,8 @@ def load_inference_artifacts(params: dict):
     token = os.environ["DAGSHUB_USER_TOKEN"]
     username = os.environ.get("DAGSHUB_USERNAME", "FrienDotJava")
 
-    model_url = f"https://dagshub.com/FrienDotJava/bpjs-hospital-readmission/raw/main/{MODEL_PATH}"
-    model_response = requests.get(model_url, auth=(username, token))
-    model_response.raise_for_status()
-    model = pickle.loads(model_response.content)
+    model_uri = "models:/Final_XGB@production"
+    model = mlflow.xgboost.load_model(model_uri)
 
     scaler_url = f"https://dagshub.com/FrienDotJava/bpjs-hospital-readmission/raw/main/{SCALER_PATH}"
     scaler_response = requests.get(scaler_url, auth=(username, token))

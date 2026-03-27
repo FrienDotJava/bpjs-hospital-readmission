@@ -292,8 +292,8 @@ stages:
       nfiles: 4
     - path: src/model_training.py
       hash: md5
-      md5: 844f124d351b4eecee705bf951ec296d
-      size: 1145
+      md5: 82c1224abbbfa7f208ca88bb7dde2ad8
+      size: 1711
     params:
       params.yaml:
         model.colsample_bytree: 0.7789403085338865
@@ -321,8 +321,8 @@ stages:
       nfiles: 4
     - path: src/model_evaluation.py
       hash: md5
-      md5: 98b2578eaa973efbcab1dad8ac3ca878
-      size: 2063
+      md5: 30026962e6d025120f21bbea12a06979
+      size: 2329
     outs:
     - path: artifacts/confusion_matrix.jpg
       hash: md5

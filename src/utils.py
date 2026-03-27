@@ -5,6 +5,7 @@ import os
 import yaml
 import pickle
 from xgboost import XGBClassifier
+import json
 
 load_dotenv()
 
@@ -81,3 +82,15 @@ def save_artifact(artifact, path: Path):
 def load_artifact(path: Path):
     with open(path, 'rb') as f:
         return pickle.load(f)
+    
+
+def save_dict_to_json(data: dict, path: Path):
+    folder_path = path.parent
+    os.makedirs(folder_path, exist_ok=True)
+    with open(path, "w") as f:
+        json.dump(data, f)
+
+
+def load_json_to_dict(path: Path):
+    with open(path, "r") as f:
+        return json.load(f)
