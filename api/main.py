@@ -5,13 +5,25 @@ from typing import Optional
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 
 from src.model_inference import load_inference_artifacts, preprocess_single
-from src.utils import load_params
+from src.utils import load_params, load_dataset_from_csv, save_dataframe_to_csv
 from fastapi.middleware.cors import CORSMiddleware
+import os
+import pandas as pd
+from apscheduler.schedulers.background import BackgroundScheduler
+from production_monitoring import run_production_drift_check
+from supabase import create_client, Client
 
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+if SUPABASE_URL and SUPABASE_KEY:
+    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+else:
+    supabase = None
 
 class PredictionRequest(BaseModel):
     no_peserta: Optional[int] = None
@@ -45,6 +57,9 @@ class PredictionResponse(BaseModel):
 
 artifacts = {}
 
+def start_monitoring_job():
+    print("Running weekly Evidently AI monitoring...")
+    run_production_drift_check()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -55,8 +70,15 @@ async def lifespan(app: FastAPI):
     artifacts["label_encoders"] = label_encoders
     artifacts["feature_store"] = feature_store
     artifacts["params"] = params
+
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(start_monitoring_job, 'interval', weeks=1)
+    scheduler.start()
+    
     yield
+
     artifacts.clear()
+    scheduler.shutdown()
 
 
 app = FastAPI(
@@ -68,7 +90,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],   # ⚠️ dev only — lock this down before production
+    allow_origins=["*"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -78,9 +100,21 @@ app.add_middleware(
 def health_check():
     return {"status": "healthy"}
 
+def log_to_supabase(features: dict, pred: int, prob: float):
+    if supabase:
+        try:
+            data = {
+                "features": features,
+                "prediction": pred,
+                "probability": prob
+            }
+            supabase.table("inference_logs").insert(data).execute()
+            print("Log saved to Supabase successfully.")
+        except Exception as e:
+            print(f"Failed to log to Supabase: {e}")
 
 @app.post("/predict", response_model=PredictionResponse)
-def predict(request: PredictionRequest):
+def predict(request: PredictionRequest, background_tasks: BackgroundTasks):
     try:
         raw_data = request.model_dump(exclude_none=True)
         X = preprocess_single(
@@ -89,10 +123,20 @@ def predict(request: PredictionRequest):
             artifacts["label_encoders"],
             artifacts["feature_store"],
         )
+
         model = artifacts["model"]
         pred = int(model.predict(X)[0])
         prob = float(model.predict_proba(X)[0, 1])
 
+        features = X.to_dict(orient="records")[0]
+
+        background_tasks.add_task(
+            log_to_supabase, 
+            features=features, 
+            prediction=pred,
+            probability=prob
+        )
+        
         return PredictionResponse(
             prediction=pred,
             label="Readmitted" if pred == 1 else "Not Readmitted",

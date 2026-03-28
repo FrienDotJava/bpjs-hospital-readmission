@@ -24,3 +24,5 @@ uvicorn
 fastapi
 pydantic
 evidently
+apscheduler
+supabase
