@@ -6,7 +6,6 @@ from evidently import Dataset
 from evidently import DataDefinition
 from supabase import create_client, Client
 import os
-import json
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")

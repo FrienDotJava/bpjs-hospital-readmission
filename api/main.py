@@ -6,15 +6,15 @@ from typing import Optional
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
 from src.model_inference import load_inference_artifacts, preprocess_single
-from src.utils import load_params, load_dataset_from_csv, save_dataframe_to_csv
+from src.utils import load_params
 from fastapi.middleware.cors import CORSMiddleware
 import os
-import pandas as pd
 from apscheduler.schedulers.background import BackgroundScheduler
-from production_monitoring import run_production_drift_check
+from api.production_monitoring import run_production_drift_check
 from supabase import create_client, Client
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
@@ -144,4 +144,19 @@ def predict(request: PredictionRequest, background_tasks: BackgroundTasks):
         )
     except Exception as e:
         raise HTTPException(status_code=422, detail=str(e))
+    
+
+@app.get("/report/drift", response_class=HTMLResponse)
+def get_production_drift_report():
+    file_path = "./reports/production_drift_report.html"
+    
+    if os.path.exists(file_path):
+        with open(file_path, "r", encoding="utf-8") as f:
+            html_content = f.read()
+        return HTMLResponse(content=html_content, status_code=200)
+    else:
+        return HTMLResponse(
+            content="<html><body><h2>Report not generated yet. Please wait for the scheduler.</h2></body></html>", 
+            status_code=404
+        )
 

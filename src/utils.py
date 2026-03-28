@@ -4,7 +4,6 @@ from pathlib import Path
 import os
 import yaml
 import pickle
-from xgboost import XGBClassifier
 import json
 
 load_dotenv()
