@@ -133,8 +133,8 @@ def predict(request: PredictionRequest, background_tasks: BackgroundTasks):
         background_tasks.add_task(
             log_to_supabase, 
             features=features, 
-            prediction=pred,
-            probability=prob
+            pred=pred,
+            prob=prob
         )
         
         return PredictionResponse(
