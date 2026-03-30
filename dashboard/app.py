@@ -3,13 +3,15 @@ import warnings
 import os
 import subprocess
 from pathlib import Path
-
+import requests
 import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import streamlit.components.v1 as components
 
 DATA_FILE = "data/cleaned/peserta.csv"
+FASTAPI_URL = "https://bpjs-readmission-api.onrender.com"
 
 if "data_ready" not in st.session_state:
     if not os.path.exists(DATA_FILE):
@@ -122,13 +124,14 @@ def prepare_fkrtl(df: pd.DataFrame) -> pd.DataFrame:
 
 # Sidebar
 PAGES = [
-    "📊 Overview",
-    "👤 Patient Demographics",
-    "🏥 Kunjungan FKRTL",
-    "🔄 Readmission Analysis",
-    "💰 Cost Analysis",
-    "🗺️ Geographic Analysis",
-    "🩺 Kunjungan FKTP",
+    "Overview",
+    "Patient Demographics",
+    "Kunjungan FKRTL",
+    "Readmission Analysis",
+    "Cost Analysis",
+    "Geographic Analysis",
+    "Kunjungan FKTP",
+    "Model Monitoring"
 ]
 
 with st.sidebar:
@@ -145,7 +148,7 @@ with st.sidebar:
 
 def missing_data_warning(name: str):
     st.warning(
-        f"⚠️ **{name}** data file not found. "
+        f"**{name}** data file not found. "
         f"Expected at `{DATA_DIR}`. Some charts may not be available.",
         icon="⚠️",
     )
@@ -156,6 +159,12 @@ def kpi_row(metrics: list[dict]):
     for col, m in zip(cols, metrics):
         with col:
             col.metric(m["label"], m["value"], m.get("delta"))
+
+
+def show_evidently_report(report_path):
+    with open(report_path, 'r', encoding='utf-8') as f:
+        html_data = f.read()
+    components.html(html_data, height=1000, scrolling=True)
 
 
 # PAGE 1 - Overview
@@ -262,7 +271,7 @@ if selected_page == PAGES[0]:
 # PAGE 2 - Patient Demographics
 elif selected_page == PAGES[1]:
     df_peserta = load_peserta()
-    st.title("👤 Patient Demographics")
+    st.title("Patient Demographics")
     st.markdown("Analisis Peserta BPJS.")
 
     if df_peserta is None:
@@ -376,7 +385,7 @@ elif selected_page == PAGES[1]:
 # PAGE 3 - FKRTL
 elif selected_page == PAGES[2]:
     df_fkrtl = load_fkrtl()
-    st.title("🏥 Kunjungan FKRTL")
+    st.title("Kunjungan FKRTL")
     st.markdown("Analisis Kunjungan Faskes Rujukan Tingkat Lanjut.")
 
     if df_fkrtl is None:
@@ -508,7 +517,7 @@ elif selected_page == PAGES[3]:
     df_peserta = load_peserta()
     df_fkrtl = load_fkrtl()
 
-    st.title("🔄 Readmission Analysis")
+    st.title("Readmission Analysis")
     st.markdown("Analisis Pola Readmission.")
 
     if df_fkrtl is None:
@@ -615,7 +624,7 @@ elif selected_page == PAGES[4]:
     df_peserta = load_peserta()
     df_fkrtl = load_fkrtl()
 
-    st.title("💰 Cost Analysis")
+    st.title("Cost Analysis")
     st.markdown("Analisis tagihan dan biaya prosedur.")
 
     if df_fkrtl is None:
@@ -732,7 +741,7 @@ elif selected_page == PAGES[5]:
     df_peserta = load_peserta()
     df_fkrtl = load_fkrtl()
 
-    st.title("🗺️ Geographic Analysis")
+    st.title("Geographic Analysis")
     st.markdown("Informasi Kunjungan FKRTL dan Tingkat Readmission pada Tingkat Provinsi.")
 
     if df_fkrtl is None:
@@ -817,7 +826,7 @@ elif selected_page == PAGES[5]:
 elif selected_page == PAGES[6]:
     df_fktp = load_fktp()
 
-    st.title("🩺 Kunjungan FKTP")
+    st.title("Kunjungan FKTP")
     st.markdown("Analisis Kunjungan FKTP.")
 
     if df_fktp is None:
@@ -925,3 +934,26 @@ elif selected_page == PAGES[6]:
             text_auto=True,
         )
         st.plotly_chart(fig, use_container_width=True)
+
+
+elif selected_page == PAGES[7]:
+    st.title("Model Monitoring")
+
+    tab1, tab2 = st.tabs(["Model Evaluation Report", "Production Drift Report"])
+
+    with tab1:
+        st.header("Training vs Test Performance")
+        show_evidently_report("./reports/evidently_evaluation_report.html")
+
+    with tab2:
+        st.header("Production Data Drift")
+        try:
+            response = requests.get(f"{FASTAPI_URL}/report/drift")
+            if response.status_code == 200:
+                components.html(response.text, height=1000, scrolling=True)
+            elif response.status_code == 404:
+                st.warning("The drift report has not been generated yet.")
+            else:
+                st.error(f"Failed to fetch report. Status code: {response.status_code}")
+        except requests.exceptions.RequestException as e:
+            st.error(f"Error connecting to API: {e}")

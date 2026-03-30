@@ -26,3 +26,4 @@ pydantic
 evidently
 apscheduler
 supabase
+streamlit
