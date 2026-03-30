@@ -30,6 +30,7 @@ st.set_page_config(
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data" / "cleaned"
+REPORT_DIR = BASE_DIR / "reports"
 GEOJSON_PATH = BASE_DIR / "indonesia.geojson"
 
 COLOR_PRIMARY = "#1f77b4"
@@ -943,7 +944,7 @@ elif selected_page == PAGES[7]:
 
     with tab1:
         st.header("Training vs Test Performance")
-        show_evidently_report("./reports/evidently_evaluation_report.html")
+        show_evidently_report(REPORT_DIR / "evidently_evaluation_report.html")
 
     with tab2:
         st.header("Production Data Drift")
