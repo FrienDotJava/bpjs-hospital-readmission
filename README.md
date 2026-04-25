@@ -31,6 +31,7 @@ Interact with the model and explore the data through these applications:
 |------------|-----|------|
 | **EDA Dashboard** | [bpjs-eda-report.streamlit.app](https://bpjs-eda-report.streamlit.app/) | Streamlit |
 | **Model Inference App** | [bpjs-next-app.vercel.app](https://bpjs-next-app.vercel.app/) | Next.js |
+| **API** | [bpjs-readmission-api.onrender.com](https://bpjs-readmission-api.onrender.com/docs) | Fast API |
 
 ### Dashboard Features
 
